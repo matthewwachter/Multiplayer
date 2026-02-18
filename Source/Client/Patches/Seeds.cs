@@ -119,6 +119,8 @@ namespace Multiplayer.Client
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (CodeInstruction inst in insts)
             {
                 if (inst.operand as MethodInfo == Rot4GetRandom)
@@ -133,6 +135,7 @@ namespace Multiplayer.Client
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Gen), nameof(Gen.HashCombineInt), [typeof(int), typeof(int)]));
                     // Pop the value off the stack and call Rand.PushState with it as the argument
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Rand), nameof(Rand.PushState), [typeof(int)]));
+                    patchCount++;
                 }
 
                 yield return inst;
@@ -140,6 +143,10 @@ namespace Multiplayer.Client
                 if (inst.operand as MethodInfo == Rot4GetRandom)
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Rand), nameof(Rand.PopState)));
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(GenSpawnRotatePatch)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
