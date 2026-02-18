@@ -130,11 +130,11 @@ namespace Multiplayer.Client
             },
             {
                 (ByteWriter data, Pawn_InventoryStockTracker inventoryTracker) => WriteSync(data, inventoryTracker.pawn),
-                (ByteReader data) => ReadSync<Pawn>(data).inventoryStock
+                (ByteReader data) => ReadSync<Pawn>(data)?.inventoryStock
             },
             {
                 (ByteWriter data, Pawn_ConnectionsTracker connectionTracker) => WriteSync(data, connectionTracker.pawn),
-                (ByteReader data) => ReadSync<Pawn>(data).connections
+                (ByteReader data) => ReadSync<Pawn>(data)?.connections
             },
             {
                 (SyncWorker sync, ref Hediff hediff) =>
@@ -164,7 +164,7 @@ namespace Multiplayer.Client
                             return;
                         }
 
-                        hediff = pawn.health.hediffSet.hediffs.First(x => x.loadID == id);
+                        hediff = pawn.health.hediffSet.hediffs.FirstOrDefault(x => x.loadID == id);
 
                         if (hediff == null)
                         {
@@ -197,10 +197,17 @@ namespace Multiplayer.Client
                         }
                         Type compType = hediffCompTypes[index];
                         var compIndex = data.Read<ushort>();
-                        if (compIndex <= 0)
+                        if (compIndex == 0)
+                        {
                             hediffComp = parent.comps.Find(c => c.props.compClass == compType);
+                        }
                         else
-                            hediffComp = parent.comps.Where(c => c.props.compClass == compType).ElementAt(compIndex);
+                        {
+                            var matching = parent.comps.Where(c => c.props.compClass == compType).ToList();
+                            hediffComp = compIndex < matching.Count ? matching[compIndex] : null;
+                            if (hediffComp == null)
+                                Log.Error($"Multiplayer :: HediffComp index {compIndex} out of range (count={matching.Count})");
+                        }
                     }
                 }, true // implicit
             },
@@ -213,12 +220,12 @@ namespace Multiplayer.Client
                 (ByteReader data) =>
                 {
                     var pawn = ReadSync<Pawn>(data);
-                    return pawn.needs.TryGetNeed(ReadSync<NeedDef>(data));
+                    return pawn?.needs.TryGetNeed(ReadSync<NeedDef>(data));
                 }, true // implicit
             },
             {
                 (ByteWriter data, Pawn_MindState mindState) => WriteSync(data, mindState.pawn),
-                (ByteReader data) => ReadSync<Pawn>(data).mindState
+                (ByteReader data) => ReadSync<Pawn>(data)?.mindState
             },
             {
                 (ByteWriter data, Pawn_CreepJoinerTracker joinerTracker) => WriteSync(data, joinerTracker?.Pawn),
@@ -873,10 +880,17 @@ namespace Multiplayer.Client
                         }
                         Type compType = thingCompTypes[index];
                         var compIndex = data.Read<ushort>();
-                        if (compIndex <= 0)
+                        if (compIndex == 0)
+                        {
                             comp = parent.AllComps.Find(c => c.props.compClass == compType);
+                        }
                         else
-                            comp = parent.AllComps.Where(c => c.props.compClass == compType).ElementAt(compIndex);
+                        {
+                            var matching = parent.AllComps.Where(c => c.props.compClass == compType).ToList();
+                            comp = compIndex < matching.Count ? matching[compIndex] : null;
+                            if (comp == null)
+                                Log.Error($"Multiplayer :: ThingComp index {compIndex} out of range (count={matching.Count})");
+                        }
                     }
                 }, true // implicit
             },
@@ -1035,7 +1049,7 @@ namespace Multiplayer.Client
                 (ByteWriter data, PlanetLayer workGiver) =>
                 {
                     int layerId = workGiver?.LayerID ?? -1;
-                    WriteSync(data, workGiver.LayerID);
+                    WriteSync(data, layerId);
                 },
                 (ByteReader data) => {
 
