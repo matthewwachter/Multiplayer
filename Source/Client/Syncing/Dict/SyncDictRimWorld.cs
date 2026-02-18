@@ -130,11 +130,11 @@ namespace Multiplayer.Client
             },
             {
                 (ByteWriter data, Pawn_InventoryStockTracker inventoryTracker) => WriteSync(data, inventoryTracker.pawn),
-                (ByteReader data) => ReadSync<Pawn>(data).inventoryStock
+                (ByteReader data) => ReadSync<Pawn>(data)?.inventoryStock
             },
             {
                 (ByteWriter data, Pawn_ConnectionsTracker connectionTracker) => WriteSync(data, connectionTracker.pawn),
-                (ByteReader data) => ReadSync<Pawn>(data).connections
+                (ByteReader data) => ReadSync<Pawn>(data)?.connections
             },
             {
                 (SyncWorker sync, ref Hediff hediff) =>
@@ -220,12 +220,12 @@ namespace Multiplayer.Client
                 (ByteReader data) =>
                 {
                     var pawn = ReadSync<Pawn>(data);
-                    return pawn.needs.TryGetNeed(ReadSync<NeedDef>(data));
+                    return pawn?.needs.TryGetNeed(ReadSync<NeedDef>(data));
                 }, true // implicit
             },
             {
                 (ByteWriter data, Pawn_MindState mindState) => WriteSync(data, mindState.pawn),
-                (ByteReader data) => ReadSync<Pawn>(data).mindState
+                (ByteReader data) => ReadSync<Pawn>(data)?.mindState
             },
             {
                 (ByteWriter data, Pawn_CreepJoinerTracker joinerTracker) => WriteSync(data, joinerTracker?.Pawn),
