@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Multiplayer.Common;
@@ -35,7 +36,7 @@ public class ServerLoadingState : AsyncConnectionState
 
         writer.WriteInt32(Server.worldData.mapCmds.Count);
 
-        foreach (var kv in Server.worldData.mapCmds)
+        foreach (var kv in Server.worldData.mapCmds.OrderBy(kv => kv.Key))
         {
             int mapId = kv.Key;
 
@@ -52,7 +53,7 @@ public class ServerLoadingState : AsyncConnectionState
 
         writer.WriteInt32(Server.worldData.mapData.Count);
 
-        foreach (var kv in Server.worldData.mapData)
+        foreach (var kv in Server.worldData.mapData.OrderBy(kv => kv.Key))
         {
             int mapId = kv.Key;
             byte[] mapData = kv.Value;
