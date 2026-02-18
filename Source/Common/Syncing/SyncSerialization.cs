@@ -430,8 +430,15 @@ namespace Multiplayer.Common
                         Array keyArray = Array.CreateInstance(arguments[0], dictionary.Count);
                         dictionary.Keys.CopyTo(keyArray, 0);
 
+                        // Sort keys for deterministic serialization order
+                        if (typeof(IComparable).IsAssignableFrom(arguments[0]))
+                            Array.Sort(keyArray);
+
+                        // Build value array in sorted key order
                         Array valueArray = Array.CreateInstance(arguments[1], dictionary.Count);
-                        dictionary.Values.CopyTo(valueArray, 0);
+                        int idx = 0;
+                        foreach (var key in keyArray)
+                            valueArray.SetValue(dictionary[key], idx++);
 
                         WriteSyncObject(data, keyArray, keyArray.GetType());
                         WriteSyncObject(data, valueArray, valueArray.GetType());

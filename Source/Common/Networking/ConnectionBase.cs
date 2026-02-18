@@ -242,7 +242,7 @@ namespace Multiplayer.Common
                 throw new PacketReadException($"Fragmented packet {packetType} (fragId {fragId}) recombined with different than expected size: {fragPacket.ReceivedSize} != {fragPacket.ExpectedSize}");
 
             fragments.RemoveAt(fragIndex);
-            ExecuteMessageHandler(handler, packetType, new ByteReader(fragPacket.Data.GetBuffer()));
+            ExecuteMessageHandler(handler, packetType, new ByteReader(fragPacket.Data.ToArray()));
         }
 
         private void ExecuteMessageHandler(PacketHandlerInfo handler, Packets packet, ByteReader data)
