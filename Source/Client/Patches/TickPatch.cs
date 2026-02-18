@@ -254,6 +254,11 @@ namespace Multiplayer.Client
                 catch (Exception e)
                 {
                     Log.Error($"Exception during ticking {tickable}: {e}");
+
+                    Multiplayer.game?.sync.TryAddInfoForDesyncLog(
+                        $"TickException:{tickable.GetType().FullName}",
+                        e.GetType().FullName
+                    );
                 }
             }
         }

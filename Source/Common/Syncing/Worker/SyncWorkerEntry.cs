@@ -77,13 +77,26 @@ public class SyncWorkerEntry
         parent?.Invoke(worker, ref obj);
 
         for (int i = 0; i < syncWorkers.Count; i++) {
-            if (syncWorkers[i](worker, ref obj))
-                return true;
+            try
+            {
+                if (syncWorkers[i](worker, ref obj))
+                    return true;
+            }
+            catch (Exception e)
+            {
+                if (worker is ReadingSyncWorker reader)
+                    reader.Reset();
+                else if (worker is WritingSyncWorker writer)
+                    writer.Reset();
 
-            if (worker is ReadingSyncWorker reader) {
-                reader.Reset();
-            } else if (worker is WritingSyncWorker writer) {
-                writer.Reset();
+                throw new Exception(
+                    $"SyncWorkerEntry.Invoke failed for type {type} (worker {i}/{syncWorkers.Count})", e);
+            }
+
+            if (worker is ReadingSyncWorker r) {
+                r.Reset();
+            } else if (worker is WritingSyncWorker w) {
+                w.Reset();
             }
         }
 
