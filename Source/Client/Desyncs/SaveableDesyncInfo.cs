@@ -26,6 +26,7 @@ public class SaveableDesyncInfo(
     public readonly ClientSyncOpinion local = local;
     public readonly ClientSyncOpinion remote = remote;
     public readonly int diffAt = diffAt;
+    public readonly bool diffAtFound = diffAtFound;
     private readonly Task<string> metadata = Task.Run(MetadataGenerator.Generate);
     private readonly Task<FileInfo> replay = Task.Run(SaveReplayIfApplicable);
 

@@ -10,7 +10,7 @@ namespace Multiplayer.Client
         const int NumButtons = 5;
         const float ButtonsWidth = 120 * NumButtons + 10 * (NumButtons - 1);
 
-        public override Vector2 InitialSize => new(30 + 130 * NumButtons, 110);
+        public override Vector2 InitialSize => new(30 + 130 * NumButtons, 135);
 
         private string text;
         private readonly SaveableDesyncInfo desyncInfo;
@@ -41,10 +41,17 @@ namespace Multiplayer.Client
             Text.Font = GameFont.Small;
 
             Text.Anchor = TextAnchor.UpperCenter;
-            Widgets.Label(new Rect(0, 0, inRect.width, 40), $"{"MpDesynced".Translate()}\n{text}");
+
+            var context = $"Tick {desyncInfo.local.startTick}";
+            if (desyncInfo.diffAt >= 0)
+                context += desyncInfo.diffAtFound
+                    ? $" | Trace divergence at index {desyncInfo.diffAt}"
+                    : " | Traces differ in length";
+
+            Widgets.Label(new Rect(0, 0, inRect.width, 60), $"{"MpDesynced".Translate()}\n{text}\n{context}");
             Text.Anchor = TextAnchor.UpperLeft;
 
-            var buttonsRect = new Rect((inRect.width - ButtonsWidth) / 2, 40, ButtonsWidth, 35);
+            var buttonsRect = new Rect((inRect.width - ButtonsWidth) / 2, 60, ButtonsWidth, 35);
 
             GUI.BeginGroup(buttonsRect);
 
