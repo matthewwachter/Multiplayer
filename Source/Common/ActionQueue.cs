@@ -20,14 +20,16 @@ namespace Multiplayer.Common
                 }
             }
 
-            try
+            while (tempQueue.Count > 0)
             {
-                while (tempQueue.Count > 0)
+                try
+                {
                     tempQueue.Dequeue().Invoke();
-            }
-            catch (Exception e)
-            {
-                errorLogger($"Exception while executing action queue: {e}");
+                }
+                catch (Exception e)
+                {
+                    errorLogger($"Exception while executing action queue: {e}");
+                }
             }
         }
 

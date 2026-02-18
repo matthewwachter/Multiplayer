@@ -182,6 +182,8 @@ namespace Multiplayer.Common
         private int IncrementIndex(int size)
         {
             int i = Position;
+            if (i + size > array.Length)
+                throw new ReaderException($"Read out of bounds (position={i}, size={size}, length={array.Length})");
             Position += size;
             return i;
         }
