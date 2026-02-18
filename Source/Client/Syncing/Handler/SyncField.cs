@@ -110,7 +110,9 @@ namespace Multiplayer.Client
 
             object value;
 
-            if (bufferChanges && SyncFieldUtil.bufferedChanges[this].TryGetValue(new(target, index), out BufferData cached))
+            if (bufferChanges
+                && SyncFieldUtil.bufferedChanges.TryGetValue(this, out var fieldChanges)
+                && fieldChanges.TryGetValue(new(target, index), out BufferData cached))
             {
                 value = cached.toSend;
                 target.SetPropertyOrField(memberPath, value, index);

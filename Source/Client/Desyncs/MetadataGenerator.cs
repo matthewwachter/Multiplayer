@@ -142,8 +142,9 @@ public static class MetadataGenerator
 
             return (ToSemanticString(assembly.GetName().Version), ToSemanticString(new Version(fileInfo.FileVersion)));
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Log.Warning($"Failed to read file version for assembly {assembly.GetName().Name}: {e}");
             return (ToSemanticString(assembly.GetName().Version), null);
         }
     }

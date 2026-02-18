@@ -51,8 +51,9 @@ namespace Multiplayer.Client
                     text.AppendLine("[info]");
                     text.AppendLine(zip.GetString("info"));
                 }
-                catch
+                catch (Exception e)
                 {
+                    Log.Warning($"Failed to read replay info section: {e}");
                 }
 
                 text.AppendLine();
@@ -63,8 +64,9 @@ namespace Multiplayer.Client
                     //Local Client Opinion data
                     local = DeserializeAndPrintSyncInfo(text, "sync_local", zip.GetBytes("sync_local"));
                 }
-                catch
+                catch (Exception e)
                 {
+                    Log.Warning($"Failed to deserialize local sync opinion: {e}");
                 }
 
                 text.AppendLine();
@@ -75,8 +77,9 @@ namespace Multiplayer.Client
                     //Remote Client Opinion data
                     remote = DeserializeAndPrintSyncInfo(text, "sync_remote", zip.GetBytes("sync_remote"));
                 }
-                catch
+                catch (Exception e)
                 {
+                    Log.Warning($"Failed to deserialize remote sync opinion: {e}");
                 }
 
                 text.AppendLine();
@@ -104,8 +107,9 @@ namespace Multiplayer.Client
                         text.AppendLine($"Game debug mode: {desyncInfo.ReadBool()}");
                     }
                 }
-                catch
+                catch (Exception e)
                 {
+                    Log.Warning($"Failed to read desync info: {e}");
                 }
 
                 text.AppendLine();
@@ -140,8 +144,9 @@ namespace Multiplayer.Client
                     foreach (var cmd in ScheduledCommand.DeserializeCmds(zip.GetBytes("maps/000_0_cmds")))
                         PrintCmdInfo(text, cmd);
                 }
-                catch
+                catch (Exception e)
                 {
+                    Log.Warning($"Failed to read map commands: {e}");
                 }
 
                 text.AppendLine();
@@ -153,8 +158,9 @@ namespace Multiplayer.Client
                     foreach (var cmd in ScheduledCommand.DeserializeCmds(zip.GetBytes("world/000_cmds")))
                         PrintCmdInfo(text, cmd);
                 }
-                catch
+                catch (Exception e)
                 {
+                    Log.Warning($"Failed to read world commands: {e}");
                 }
             }
 
