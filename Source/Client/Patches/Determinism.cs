@@ -73,16 +73,24 @@ namespace Multiplayer.Client.Patches
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> e)
         {
             List<CodeInstruction> insts = new List<CodeInstruction>(e);
+            var patchCount = 0;
 
             for (int i = insts.Count - 1; i >= 0; i--)
             {
                 if (insts[i].operand as MethodBase == FirstOrDefault)
+                {
                     insts.Insert(
                        i + 1,
                        new CodeInstruction(OpCodes.Ldloc_1),
                        new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(GenerateNewPawnInternalPatch), nameof(Unshuffle)).MakeGenericMethod(typeof(NameTriple)))
                    );
+                    patchCount++;
+                }
             }
+
+            const int expectedPatches = 1;
+            if (patchCount < expectedPatches)
+                Log.Error($"Patching {nameof(GenerateNewPawnInternalPatch)} failed (expected: >={expectedPatches}, patched: {patchCount}). Was the original method changed?");
 
             return insts;
         }
@@ -134,6 +142,8 @@ namespace Multiplayer.Client.Patches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var inst in insts)
             {
                 yield return inst;
@@ -142,8 +152,13 @@ namespace Multiplayer.Client.Patches
                 {
                     yield return new CodeInstruction(OpCodes.Ldc_I4_1);
                     yield return new CodeInstruction(OpCodes.Or);
+                    patchCount++;
                 }
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(DrawTrackerTickPatch)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
@@ -151,18 +166,22 @@ namespace Multiplayer.Client.Patches
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts, FieldInfo cellsShuffledField)
         {
-            bool found = false;
+            var patchCount = 0;
             foreach (CodeInstruction inst in insts)
             {
                 yield return inst;
-                if (!found && inst.operand as FieldInfo == cellsShuffledField)
+                if (patchCount == 0 && inst.operand as FieldInfo == cellsShuffledField)
                 {
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CellsShufflePatchShared), nameof(ShouldShuffle)));
                     yield return new CodeInstruction(OpCodes.Not);
                     yield return new CodeInstruction(OpCodes.Or);
-                    found = true;
+                    patchCount++;
                 }
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(CellsShufflePatchShared)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
 
         public static bool ShouldShuffle()
@@ -264,12 +283,22 @@ namespace Multiplayer.Client.Patches
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+            var target = AccessTools.PropertyGetter(typeof(ModLister), nameof(ModLister.BiotechInstalled));
+
             foreach (var inst in insts)
             {
-                if (inst.operand as MethodInfo == AccessTools.PropertyGetter(typeof(ModLister), nameof(ModLister.BiotechInstalled)))
+                if (inst.operand as MethodInfo == target)
+                {
                     inst.operand = AccessTools.PropertyGetter(typeof(ModsConfig), nameof(ModsConfig.BiotechActive));
+                    patchCount++;
+                }
                 yield return inst;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(CheckWhetherBiotechIsActive)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
@@ -298,6 +327,7 @@ namespace Multiplayer.Client.Patches
         {
             var battleActiveField =
                 AccessTools.Field(typeof(Pawn_RecordsTracker), nameof(Pawn_RecordsTracker.battleActive));
+            var patchCount = 0;
 
             foreach (var inst in insts)
             {
@@ -306,10 +336,15 @@ namespace Multiplayer.Client.Patches
                 {
                     yield return new CodeInstruction(OpCodes.Pop);
                     yield return new CodeInstruction(OpCodes.Pop);
+                    patchCount++;
                 }
                 else
                     yield return inst;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(RecordsTrackerExposePatch)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
@@ -339,6 +374,8 @@ namespace Multiplayer.Client.Patches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var inst in insts)
             {
                 if (inst.opcode == OpCodes.Stfld && inst.operand as FieldInfo == queryTickField)
@@ -346,10 +383,15 @@ namespace Multiplayer.Client.Patches
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Ldarg_1);
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(DontUpdateThoughtQueryTickInInterface), nameof(NewQueryTick)));
+                    patchCount++;
                 }
 
                 yield return inst;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(DontUpdateThoughtQueryTickInInterface)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
 
         private static int NewQueryTick(int ticks, SituationalThoughtHandler thoughtHandler, Pawn otherPawn)
@@ -383,13 +425,22 @@ namespace Multiplayer.Client.Patches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var inst in insts)
             {
                 if (inst.operand as MethodInfo == clearMethod)
+                {
                     yield return new CodeInstruction(OpCodes.Pop);
+                    patchCount++;
+                }
                 else
                     yield return inst;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(NotifyThoughtsDirtyPatch)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
@@ -409,7 +460,12 @@ namespace Multiplayer.Client.Patches
             matcher.MatchEndForward(
                 new CodeMatch(OpCodes.Ldfld, statusField),
                 new CodeMatch(OpCodes.Brtrue_S)
-            ).Insert(
+            );
+
+            if (!matcher.IsValid)
+                Log.Error($"Patching {nameof(PawnCapacitiesHandlerGetLevelPatch)} failed: cache update check instructions not found. Was the original method changed?");
+
+            matcher.Insert(
                 new CodeInstruction(OpCodes.Call,
                     AccessTools.Method(typeof(PawnCapacitiesHandlerGetLevelPatch), nameof(ShouldUpdateCache))),
                 new CodeInstruction(OpCodes.Ldc_I4_0),
@@ -420,7 +476,12 @@ namespace Multiplayer.Client.Patches
             matcher.MatchEndForward(
                 new CodeMatch(OpCodes.Ldc_I4_2),
                 new CodeMatch(OpCodes.Stfld, statusField)
-            ).Insert(
+            );
+
+            if (!matcher.IsValid)
+                Log.Error($"Patching {nameof(PawnCapacitiesHandlerGetLevelPatch)} failed: status setter instructions not found. Was the original method changed?");
+
+            matcher.Insert(
                 new CodeInstruction(OpCodes.Call,
                     AccessTools.Method(typeof(PawnCapacitiesHandlerGetLevelPatch), nameof(NewCacheStatus)))
             );
@@ -454,7 +515,12 @@ namespace Multiplayer.Client.Patches
             // Modify cache update checking
             matcher.MatchEndForward(
                 new CodeMatch(OpCodes.Callvirt, typeof(Dictionary<Thing, StatCacheEntry>).GetMethod("TryGetValue"))
-            ).Advance(1).Insert(
+            );
+
+            if (!matcher.IsValid)
+                Log.Error($"Patching {nameof(StatWorkerGetValuePatch)} failed: TryGetValue instruction not found. Was the original method changed?");
+
+            matcher.Advance(1).Insert(
                 new CodeInstruction(OpCodes.Ldarg_0),
                 new CodeInstruction(OpCodes.Ldarg_1),
                 new CodeInstruction(OpCodes.Call,
@@ -463,7 +529,12 @@ namespace Multiplayer.Client.Patches
 
             matcher.MatchEndForward(
                 new CodeMatch(OpCodes.Ldfld, typeof(StatCacheEntry).GetField(nameof(StatCacheEntry.gameTick)))
-            ).Advance(1).Insert(
+            );
+
+            if (!matcher.IsValid)
+                Log.Error($"Patching {nameof(StatWorkerGetValuePatch)} failed: gameTick field load not found. Was the original method changed?");
+
+            matcher.Advance(1).Insert(
                 new CodeInstruction(OpCodes.Call,
                     AccessTools.Method(typeof(Math), nameof(Math.Abs), new[] { typeof(int) }))
             );
@@ -471,7 +542,12 @@ namespace Multiplayer.Client.Patches
             // Modify status setter
             matcher.MatchEndForward(
                 new CodeMatch(OpCodes.Newobj)
-            ).Advance(1).Insert(
+            );
+
+            if (!matcher.IsValid)
+                Log.Error($"Patching {nameof(StatWorkerGetValuePatch)} failed: Newobj instruction not found. Was the original method changed?");
+
+            matcher.Advance(1).Insert(
                 new CodeInstruction(OpCodes.Call,
                     AccessTools.Method(typeof(StatWorkerGetValuePatch), nameof(NewCacheTicksCtor)))
             );
@@ -479,7 +555,12 @@ namespace Multiplayer.Client.Patches
             // Modify status setter
             matcher.MatchEndForward(
                     new CodeMatch(OpCodes.Stfld, typeof(StatCacheEntry).GetField(nameof(StatCacheEntry.gameTick)))
-            ).Insert(
+            );
+
+            if (!matcher.IsValid)
+                Log.Error($"Patching {nameof(StatWorkerGetValuePatch)} failed: gameTick field store not found. Was the original method changed?");
+
+            matcher.Insert(
                 new CodeInstruction(OpCodes.Call,
                     AccessTools.Method(typeof(StatWorkerGetValuePatch), nameof(NewCacheTicks)))
             );
@@ -544,6 +625,7 @@ namespace Multiplayer.Client.Patches
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr)
         {
             var target = MethodOf.Lambda(Rand.MTBEventOccurs);
+            var patchCount = 0;
 
             foreach (var ci in instr)
             {
@@ -555,8 +637,13 @@ namespace Multiplayer.Client.Patches
                 {
                     yield return new CodeInstruction(OpCodes.Ldc_I4_0);
                     yield return new CodeInstruction(OpCodes.And);
+                    patchCount++;
                 }
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(DeterministicUndercaveRockCollapse)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
 
         static void Prefix() => Rand.PushState();
@@ -618,6 +705,7 @@ namespace Multiplayer.Client.Patches
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr)
         {
             var targetCall = AccessTools.DeclaredPropertyGetter(typeof(MoteCounter), nameof(MoteCounter.Saturated));
+            var patchCount = 0;
 
             foreach (var ci in instr)
             {
@@ -630,8 +718,13 @@ namespace Multiplayer.Client.Patches
                 {
                     yield return new CodeInstruction(OpCodes.Ldc_I4_0);
                     yield return new CodeInstruction(OpCodes.And);
+                    patchCount++;
                 }
             }
+
+            const int expectedPatches = 2;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(FixNullMotes)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
