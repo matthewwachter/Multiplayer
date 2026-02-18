@@ -32,12 +32,12 @@ public static class TypeCache
 
         subClassesOrdered = subClasses.ToDictionary(
             kv => kv.Key,
-            kv => kv.Value.OrderBy(t => t.IsAbstract).ThenBy(t => t.Name).ToList()
+            kv => kv.Value.OrderBy(t => t.IsAbstract).ThenBy(t => t.FullName).ThenBy(t => t.Assembly.GetName().Name).ToList()
         );
 
         interfaceImplementationsOrdered = interfaceImplementations.ToDictionary(
             kv => kv.Key,
-            kv => kv.Value.OrderBy(t => t.IsInterface).ThenBy(t => t.Name).ToList()
+            kv => kv.Value.OrderBy(t => t.IsInterface).ThenBy(t => t.FullName).ThenBy(t => t.Assembly.GetName().Name).ToList()
         );
     }
 
@@ -67,7 +67,8 @@ public static class TypeCache
     {
         return type.AllImplementing()
             .OrderBy(t => t.IsInterface)
-            .ThenBy(t => t.Name)
+            .ThenBy(t => t.FullName)
+            .ThenBy(t => t.Assembly.GetName().Name)
             .ToArray();
     }
 
@@ -75,7 +76,8 @@ public static class TypeCache
     {
         return type
             .AllSubclassesNonAbstract()
-            .OrderBy(t => t.Name)
+            .OrderBy(t => t.FullName)
+            .ThenBy(t => t.Assembly.GetName().Name)
             .ToArray();
     }
 }
