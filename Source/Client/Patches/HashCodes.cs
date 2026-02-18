@@ -21,13 +21,22 @@ namespace Multiplayer.Client.Patches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var ci in insts)
             {
                 if (ci.Calls(OriginalGetHash))
+                {
                     yield return new CodeInstruction(OpCodes.Call, ChangedGetHash);
+                    patchCount++;
+                }
                 else
                     yield return ci;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(BaseWindSpeetGetHashCodeChange)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
 
         static int GetMapHash(Map map)
@@ -70,13 +79,22 @@ namespace Multiplayer.Client.Patches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var inst in insts)
             {
                 if (inst.operand as MethodInfo == Combine)
+                {
                     inst.operand = AccessTools.Method(typeof(PatchTargetInfoHashCodes), nameof(CombineHashes));
+                    patchCount++;
+                }
 
                 yield return inst;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount < expectedPatches)
+                Log.Error($"Patching {nameof(PatchTargetInfoHashCodes)} failed (expected: >={expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
 
         static int CombineHashes(int seed, Map map) => Gen.HashCombineInt(seed, map?.uniqueID ?? -1);

@@ -33,6 +33,8 @@ namespace Multiplayer.Client
         // and handling this case properly might prevent some crashes and help with debugging
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var inst in insts)
             {
                 yield return inst;
@@ -41,8 +43,13 @@ namespace Multiplayer.Client
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Call, FrameCountReplacementMethod);
+                    patchCount++;
                 }
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(JobTrackerStartFixFrames)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
 
         static int FrameCountReplacement(int frameCount, Pawn_JobTracker tracker)
@@ -513,6 +520,12 @@ namespace Multiplayer.Client
             var strIndex = list.FirstIndexOf(i =>
                 "Current map is null after loading but there are maps available. Setting current map to [0].".Equals(i.operand)
             );
+
+            if (strIndex < 0)
+            {
+                Log.Error($"Patching {nameof(AllowCurrentMapNullWhenLoading)} failed (target string not found). Was the original method changed?");
+                return list;
+            }
 
             // Remove Log.Error(str) call and setting value=0
             list.RemoveAt(strIndex);

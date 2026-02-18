@@ -147,15 +147,24 @@ namespace Multiplayer.Client.Patches
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insts)
         {
+            var patchCount = 0;
+
             foreach (var inst in insts)
             {
                 // Handle negative thing ids when loading
                 // These come from getting a unique id in the interface and are fixed (replaced) later when necessary
                 if (inst.operand is "\\d+$")
+                {
                     inst.operand = "-?\\d+$";
+                    patchCount++;
+                }
 
                 yield return inst;
             }
+
+            const int expectedPatches = 1;
+            if (patchCount != expectedPatches)
+                Log.Error($"Patching {nameof(HandleNegativeThingIdWhenLoading)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
     }
 
