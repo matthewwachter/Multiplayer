@@ -138,5 +138,6 @@ public class ClientLoadingState(ConnectionBase connection) : ClientBaseState(con
         var loadingMs = watch.ElapsedMilliseconds;
         Log.Message($"Loaded game in {loadingMs}ms");
         connection.ChangeState(ConnectionStateEnum.ClientPlaying);
+        Rejoiner.ResetRetries();
     }
 }

@@ -32,6 +32,23 @@ public class SaveableDesyncInfo(
 
     public bool ReadyToSave => metadata.IsCompleted && replay.IsCompleted;
 
+    public void SaveWhenReady()
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                // Wait for background tasks to complete (with timeout)
+                await Task.WhenAll(metadata, replay).ContinueWith(_ => { }, TaskContinuationOptions.None);
+                Save();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Exception in background desync info save: {e}");
+            }
+        });
+    }
+
     public void Save()
     {
         var watch = Stopwatch.StartNew();

@@ -1,4 +1,4 @@
-﻿using Multiplayer.Client.Util;
+using Multiplayer.Client.Util;
 using Multiplayer.Common;
 using Verse;
 using Verse.Profile;
@@ -7,6 +7,9 @@ namespace Multiplayer.Client;
 
 public static class Rejoiner
 {
+    public const int MaxAutoRetries = 3;
+    public static int rejoinAttempts;
+
     public static void DoRejoin()
     {
         Multiplayer.Client.Send(Packets.Client_RequestRejoin);
@@ -32,5 +35,10 @@ public static class Rejoiner
                 Find.WindowStack.Add(new RejoiningWindow());
             });
         }, "Entry", "LoadingLongEvent", true, null, false);
+    }
+
+    public static void ResetRetries()
+    {
+        rejoinAttempts = 0;
     }
 }

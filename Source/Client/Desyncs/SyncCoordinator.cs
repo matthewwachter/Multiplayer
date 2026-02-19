@@ -4,6 +4,7 @@ using System.Linq;
 using Multiplayer.Client.Desyncs;
 using Multiplayer.Client.Util;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using Verse;
 
@@ -128,11 +129,32 @@ namespace Multiplayer.Client
             Multiplayer.Client.Send(Packets.Client_Desynced, local.startTick, diffAt);
             Multiplayer.session.desyncTracesFromHost = null;
 
-            MpUI.ClearWindowStack();
-            Find.WindowStack.Add(new DesyncedWindow(
-                desyncMessage,
-                new SaveableDesyncInfo(this, local, remote, diffAt, found)
-            ));
+            var desyncInfo = new SaveableDesyncInfo(this, local, remote, diffAt, found);
+
+            if (Multiplayer.settings.autoRejoinOnDesync && Rejoiner.rejoinAttempts < Rejoiner.MaxAutoRetries)
+            {
+                Rejoiner.rejoinAttempts++;
+                MpLog.Log($"Auto-rejoin attempt {Rejoiner.rejoinAttempts}/{Rejoiner.MaxAutoRetries}");
+
+                // Save desync info on background thread before rejoining
+                desyncInfo.SaveWhenReady();
+                Rejoiner.DoRejoin();
+            }
+            else
+            {
+                MpUI.ClearWindowStack();
+
+                string extraMessage = null;
+                if (Multiplayer.settings.autoRejoinOnDesync && Rejoiner.rejoinAttempts >= Rejoiner.MaxAutoRetries)
+                    extraMessage = $"Auto-rejoin failed after {Rejoiner.MaxAutoRetries} attempts";
+
+                Find.WindowStack.Add(new DesyncedWindow(
+                    extraMessage != null ? $"{desyncMessage}\n{extraMessage}" : desyncMessage,
+                    desyncInfo
+                ));
+
+                Rejoiner.ResetRetries();
+            }
         }
 
         private static int FindTraceHashesDiffTick(ClientSyncOpinion local, ClientSyncOpinion remote, out bool found)
