@@ -72,6 +72,7 @@ enum ConnectionStateEnum : byte
     ServerLoading,    // Server sending world data
     ServerPlaying,    // Server-side gameplay handlers
     ServerSteam,      // (unused)
+    Count,            // Sentinel value for enum count
     Disconnected      // Terminal state
 }
 ```

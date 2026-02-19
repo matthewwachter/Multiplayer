@@ -109,13 +109,13 @@ Registration Phase
 Finalization Phase (Sync.ValidateAll)
 ├── PostInitHandlers()              Sort handlers, assign syncId to each
 ├── ValidateAll()                   Check all handlers are properly configured
-└── HandlerHash                     CRC32 of all handler definitions
+└── HandlerHash                     Hash of all handler definitions
                                     (must match across all clients)
 ```
 
 Each handler gets a unique `syncId` (integer index). This ID is sent in network packets to identify which handler to invoke on the receiving side.
 
-The **HandlerHash** is a CRC32 computed over all handler definitions. During the join handshake, clients compare HandlerHashes to ensure they have the same sync handlers in the same order. A mismatch means the mod versions are incompatible.
+The **HandlerHash** is computed over all handler definitions using `GenText.StableStringHash()` combined with XOR and multiplicative mixing. During the join handshake, clients compare HandlerHashes to ensure they have the same sync handlers in the same order. A mismatch means the mod versions are incompatible.
 
 ## Command Flow
 

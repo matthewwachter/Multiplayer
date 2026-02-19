@@ -25,6 +25,40 @@ Source/
 
 Client and Common target .NET Framework 4.8 because RimWorld runs on Unity's Mono runtime. Server and Tests target .NET 8.0 since they run independently of the game.
 
+## Code Organization
+
+### Patches Split
+
+The original monolithic `Patches.cs` has been split into domain-specific files under `Source/Client/Patches/`:
+
+| File | Domain |
+|------|--------|
+| `Dialogs.cs` | Dialog and window patches |
+| `GameFlow.cs` | Game startup, loading, saving flow |
+| `Input.cs` | Input handling and key bindings |
+| `Jobs.cs` | Job and work-related patches |
+| `PawnSetup.cs` | Pawn creation and initialization |
+| `Saving.cs` | Save/load system patches |
+| `SyncOptimization.cs` | Performance optimizations for sync |
+
+The original `Patches.cs` still exists with remaining general-purpose patches.
+
+### SyncDict Split
+
+`SyncDictRimWorld` is a partial class split across 5 domain-specific files in `Source/Client/Syncing/Dict/`:
+
+- `SyncDictCore.cs` — Core game types
+- `SyncDictPawns.cs` — Pawn-related types
+- `SyncDictWorld.cs` — World and map types
+- `SyncDictUI.cs` — UI and dialog types
+- `SyncDictBuildings.cs` — Building and facility types
+
+The main `SyncDictRimWorld.cs` merges all trees via `SyncWorkerDictionaryTree.Merge()`.
+
+### Utility Types in Common
+
+Several utility types live in `Source/Common/` for shared use by both Client and Server: `CollectionExtensions`, `DeterministicHash`, `Container`, `UniqueList`, `IdentityComparer`, `Utf8StringWriter`, `FixedSizeQueue`.
+
 ## Key Statics
 
 The `Multiplayer` static class (`Source/Client/Multiplayer.cs`) is the central state holder:
@@ -111,6 +145,13 @@ InitMultiplayer(ModContentPack)
 - **Async Time** executes commands at the correct tick, managing per-map and world ticking.
 - **Desync Detection** records RNG state after every tick and command, comparing opinions across clients.
 
+### Additional Subsystems
+
+- **Factions** (`Source/Client/Factions/`) — Multi-faction support, faction sidebar UI, blueprint ownership, and faction context switching.
+- **Sessions** (`Source/Client/Session/`) — Multiplayer session management, rejoin logic, autosaving, and player info tracking.
+- **Persistent** (`Source/Client/Persistent/`) — Long-lived UI sessions for trading, caravan forming/splitting, and gravship travel.
+- **Settings** (`Source/Client/Settings/`) — `MpSettings` configuration and settings UI.
+
 ## Key Dependencies
 
 | Package | Version | Purpose |
@@ -131,3 +172,5 @@ public const int Protocol = 53;
 ```
 
 Protocol version must be bumped when network-incompatible changes are made. Clients and server compare protocol versions during the join handshake.
+
+In addition to protocol version, a **sync handler hash** (`Sync.HandlerHash`) is computed over all sync handler definitions and compared during the handshake. This catches cases where the mod version matches but sync handler registrations differ (e.g., different mod compatibility patches loaded).

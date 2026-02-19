@@ -251,9 +251,9 @@ enum TimeVote : byte
 ```csharp
 enum TimeControl
 {
-    EveryoneControls,  // Each player votes, lowest wins
-    LowestWins,        // Same as EveryoneControls
-    HostOnly           // Only host can change speed
+    EveryoneControls,  // All players set speed independently
+    LowestWins,        // Each player votes, the lowest requested speed is used
+    HostOnly           // Only the host can change speed
 }
 ```
 

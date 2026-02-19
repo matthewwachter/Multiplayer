@@ -235,6 +235,37 @@ IPlayerInfo player = MP.GetPlayerById(playerId);
 
 `IPlayerInfo` provides player metadata (name, id, faction, etc.).
 
+## Utility Methods
+
+The API provides additional utility methods for advanced integration:
+
+### Thing Lookup
+
+```csharp
+// Look up a Thing by its multiplayer-assigned ID
+Thing thing = MP.GetThingById(int id);
+
+// Try-pattern variant (returns false if not found)
+if (MP.TryGetThingById(id, out Thing thing)) { ... }
+```
+
+### Session Context
+
+```csharp
+// Set the active session context for transferable sync (e.g., trade dialogs)
+MP.SetCurrentSessionWithTransferables(ISessionWithTransferables session);
+
+// Set context for ThingFilter sync (e.g., storage/bill filters)
+MP.SetThingFilterContext(ThingFilterContext context);
+```
+
+### Letter Auto-Dismiss
+
+```csharp
+// Register a handler to auto-dismiss expired letters (e.g., timed quest offers)
+MP.RegisterDefaultLetterChoice(MethodInfo method, Type letterType = null);
+```
+
 ## Implementation
 
 The API is implemented by `MultiplayerAPIBridge` (`Source/Client/MultiplayerAPIBridge.cs`), which delegates to the internal sync system. The bridge is discovered by the API assembly at runtime via the type name `Multiplayer.Common.MultiplayerAPIBridge`.
