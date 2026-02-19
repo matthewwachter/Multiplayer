@@ -4,6 +4,7 @@ using System.Linq;
 using Multiplayer.API;
 using Multiplayer.Client.Persistent;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using Verse;
 using Verse.AI.Group;
@@ -198,7 +199,8 @@ namespace Multiplayer.Client
                     var assignments = (MpRitualAssignments)ReadSync<RitualRoleAssignments>(data);
                     if (assignments == null) return null;
 
-                    var ritual = ReadSync<Precept_Ritual>(data); // todo handle ritual becoming null?
+                    var ritual = ReadSync<Precept_Ritual>(data);
+                    if (ritual == null) return null;
                     return new PawnRitualRoleSelectionWidget(assignments, ritual, assignments.session.data.target, assignments.session.data.outcome);
                 }
             },
@@ -212,7 +214,8 @@ namespace Multiplayer.Client
                     var assignment = (MpRitualAssignments)ReadSync<RitualRoleAssignments>(data);
                     if (assignment == null) return null;
 
-                    var ritual = ReadSync<Precept_Ritual>(data); // todo handle ritual becoming null?
+                    var ritual = ReadSync<Precept_Ritual>(data);
+                    if (ritual == null) return null;
                     return new Dialog_BeginRitual(assignment, ritual, assignment.ritualTarget, assignment.session.data.outcome);
                 }
             },
@@ -393,7 +396,8 @@ namespace Multiplayer.Client
                     var assignments = (MpPsychicRitualAssignments)ReadSync<PsychicRitualRoleAssignments>(data);
                     if (assignments == null) return null;
 
-                    var ritual = ReadSync<PsychicRitualDef>(data); // todo handle ritual becoming null?
+                    var ritual = ReadSync<PsychicRitualDef>(data);
+                    if (ritual == null) return null;
                     return new PawnPsychicRitualRoleSelectionWidget(ritual, assignments.session.candidatePool, assignments);
                 }
             },
