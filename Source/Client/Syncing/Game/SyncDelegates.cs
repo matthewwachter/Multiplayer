@@ -19,20 +19,20 @@ namespace Multiplayer.Client
         public static void Init()
         {
             const SyncContext mouseKeyContext = SyncContext.QueueOrder_Down | SyncContext.MapMouseCell;
-            // TODO probably not needed, perhaps just sync PrepareCycleJob as it contains SetQueuedInformation after TryTakeOrderedJob
+            // Probably not needed, perhaps just sync PrepareCycleJob as it contains SetQueuedInformation after TryTakeOrderedJob
             SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_CarryToBiosculpterPod),      "GetOptionsFor", 0).CancelIfAnyFieldNull().SetContext(mouseKeyContext);       // Carry to biosculpter pod
             SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_CaptureEntity),              "GetOptionsFor", 2).CancelIfAnyFieldNull().SetContext(mouseKeyContext);       // Capture entity
 
             // Other possible float menu options that could be added later:
-            // TODO maybe? TransporterUtility.InitiateLoading is not synced, not sure if significant
+            // TransporterUtility.InitiateLoading is not synced, not sure if significant
             // SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_CarryToShuttle), "GetSingleOptionFor", 0).CancelIfAnyFieldNull().SetContext(mouseKeyContext);           // Carry to shuttle
-            // TODO: missing some flecks
+            // Missing some flecks
             // SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_DraftedAttack), "GetSingleOptionFor", 0).CancelIfAnyFieldNull().SetContext(mouseKeyContext);            // Drafted attack
-            // TODO: missing fleck
+            // Missing fleck
             // SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_Equip), "GetSingleOptionFor", 0).CancelIfAnyFieldNull().SetContext(mouseKeyContext);                    // Equip
-            // TODO: uncertain if everything is synced, some things are possibly synced elsewhere, possibly not fully synced
+            // Uncertain if everything is synced, some things are possibly synced elsewhere, possibly not fully synced
             // SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_StartRitual), "GetOptionsFor", 0).CancelIfAnyFieldNull().SetContext(mouseKeyContext);                   // Start ritual
-            // TODO: missing fleck/mote
+            // Missing fleck/mote
             // SyncDelegate.Lambda(typeof(FloatMenuOptionProvider_WorkGivers), "GetOptionsFor", 0).CancelIfAnyFieldNull().SetContext(mouseKeyContext);                    // Generic work givers
 
             SyncDelegate.Lambda(typeof(Command_SetPlantToGrow), nameof(Command_SetPlantToGrow.ProcessInput), 2);                                        // Set plant to grow
@@ -296,7 +296,7 @@ namespace Multiplayer.Client
             SyncDelegate.Lambda(typeof(LordJob_BestowingCeremony), nameof(LordJob_BestowingCeremony.GetPawnGizmos), 2); // Cancel ceremony
             SyncDelegate.Lambda(typeof(LordJob_BestowingCeremony), nameof(LordJob_BestowingCeremony.GetPawnGizmos), 0); // Make pawn leave ceremony
 
-            // TODO: May need to change this back to SynchMetho, but changes to 1.6 broke it.
+            // May need to change this back to SyncMethod, but changes to 1.6 broke it
             SyncDelegate.Lambda(typeof(LordToil_BestowingCeremony_Wait), nameof(LordToil_BestowingCeremony_Wait.ExtraFloatMenuOptions), 0); // Begin bestowing float menu
             SyncMethod.Register(typeof(Command_BestowerCeremony), nameof(Command_BestowerCeremony.ProcessInput)); // Begin bestowing gizmo
 

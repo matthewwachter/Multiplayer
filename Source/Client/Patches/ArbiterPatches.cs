@@ -71,7 +71,7 @@ namespace Multiplayer.Client
         static bool Prefix() => !Multiplayer.arbiterInstance;
     }
 
-    // TODO test if this works.
+    // Needs verification on 1.6
     [HarmonyPatch(typeof(WorldGrid), (nameof(WorldGrid.InitializeGlobalLayers)))]
     static class NoWorldRenderLayersForArbiter
     {
@@ -84,7 +84,7 @@ namespace Multiplayer.Client
         }
     }
 
-    // TODO: Test if it works in 1.6, we may need a way to fully prevent the layers from being initialized
+    // May need a way to fully prevent the layers from being initialized on 1.6
     [HarmonyPatch(typeof(PlanetLayer), nameof(PlanetLayer.InitializeLayer))]
     static class NoPlanetRenderLayersForArbiter
     {

@@ -73,7 +73,7 @@ namespace Multiplayer.Client.Patches
             __state = true;
         }
 
-        // TODO: Something in Feedback.cs seems to block the wantedMode switch.
+        // Something in Feedback.cs seems to block the wantedMode switch.
         // For now, it's set manually - consider keeping it this way permanently.
         static void Finalizer(bool ___launching, PlanetTile ___curTile, bool __state)
         {
@@ -111,7 +111,7 @@ namespace Multiplayer.Client.Patches
         static void Finalizer() => CancelDesignatorDeselection.DisableCanceling();
     }
 
-    // TODO: Is there a better way to synchronize this method?
+    // Consider if there's a better way to synchronize this method
     [HarmonyPatch(typeof(GravshipLandingMarker), nameof(GravshipLandingMarker.BeginLanding))]
     public static class PatchBeginLandingToSyncWithClients
     {
@@ -201,7 +201,7 @@ namespace Multiplayer.Client.Patches
         }
     }
 
-    // TODO: Is the random pushing here necessary? This might be related to issue #638.
+    // Random pushing here might be unnecessary, possibly related to issue #638
     [HarmonyPatch(typeof(WorldComponent_GravshipController), nameof(WorldComponent_GravshipController.LandingEnded))]
     public static class PatchGravshipLandingEnded
     {
@@ -228,7 +228,7 @@ namespace Multiplayer.Client.Patches
     }
     #endregion
 
-    // TODO: Check what this actually does and whether it’s still necessary
+    // May no longer be necessary — needs investigation
     // Stop the landing co message from showing every game tick
     [HarmonyPatch(typeof(TickManager), nameof(TickManager.PlayerCanControl), MethodType.Getter)]
     public static class PatchTickmanagerPlayerCanControlGetter

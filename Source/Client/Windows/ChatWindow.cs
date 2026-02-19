@@ -163,7 +163,6 @@ namespace Multiplayer.Client
 
         private void ClickPlayer(PlayerInfo p)
         {
-            // todo
             return;
 
             if (p.id == 0 && Event.current.button == 1)

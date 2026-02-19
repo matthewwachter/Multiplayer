@@ -88,7 +88,7 @@ public static class FactionCreator
 
     private static void InitLocalVisuals(Scenario scenario, Map generatedMap)
     {
-        // TODO #587: There may be other logical ScenParts (e.g., ScenPart_StartingResearch) that
+        // See #587: There may be other logical ScenParts (e.g., ScenPart_StartingResearch) that
         // need to be executed by all players in the game.
         var onlyVisualScenParts = new HashSet<Type>() { typeof(ScenPart_GameStartDialog) };
 
@@ -147,7 +147,7 @@ public static class FactionCreator
 
         ResearchUtility.ApplyPlayerStartingResearch();
 
-        // TODO #587: There may be other only visual ScenParts (e.g., ScenPart_GameStartDialog) that only need to
+        // See #587: There may be other only visual ScenParts (e.g., ScenPart_GameStartDialog) that only need to
         // be executed by the local client (the issuer/creator of the new faction).
         PostGameStart(scenario, new HashSet<Type>() { typeof(ScenPart_StartingResearch) });
 

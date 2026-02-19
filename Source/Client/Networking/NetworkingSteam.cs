@@ -45,7 +45,7 @@ namespace Multiplayer.Client.Networking
         protected override void OnClose(ServerDisconnectPacket? goodbye)
         {
             if (goodbye.HasValue) Send(goodbye.Value);
-            // TODO this should probably include SteamNetworking.CloseP2PSessionWithUser to free up any leftover
+            // Should probably include SteamNetworking.CloseP2PSessionWithUser to free up any leftover
             //   resources in the Steam API. The API docs are not clear whether the connection is closed instantly, or
             //   are the queued packets sent.
         }

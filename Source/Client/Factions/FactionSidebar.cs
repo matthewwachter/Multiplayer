@@ -370,9 +370,7 @@ namespace Multiplayer.Client
             List<Pawn> startingPawns = new List<Pawn>();
             FactionCreationData factionCreationDto = new FactionCreationData();
 
-            // OldComment: This is to force a sync
-            // TODO: Make this clearer without a needed comment
-            // LookUp Multiplayer.InInterface && Multiplayer.ShouldSync
+            // Force a sync via Multiplayer.InInterface && Multiplayer.ShouldSync
 
             Current.programStateInt = ProgramState.Playing;
 

@@ -94,7 +94,7 @@ public static class GravshipTravelUtils
     private static void SetFreeze(bool value) => Multiplayer.Client.Send(new ClientFreezePacket(value));
     private static string GravshipDialogPrefix => "ConfirmGravEngineLaunch".Translate().RawText;
 
-    // TODO: Try to find a better solution for that
+    // Consider finding a better solution for closing gravship dialogs
     public static void CloseGravshipPrelaunchDialog()
     {
         Dialog_MessageBox dialog = Find.WindowStack.Windows

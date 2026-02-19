@@ -153,7 +153,6 @@ namespace Multiplayer.Client
             Session.dataSnapshot.MapData[mapId] = mapData;
 
             //ClientJoiningState.ReloadGame(TickPatch.tickUntil, Find.Maps.Select(m => m.uniqueID).Concat(mapId).ToList());
-            // todo Multiplayer.client.Send(Packets.CLIENT_MAP_LOADED);
         }
 
         [PacketHandler(Packets.Server_Notification)]

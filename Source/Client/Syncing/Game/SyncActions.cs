@@ -20,7 +20,7 @@ namespace Multiplayer.Client
                 Log.Error(error);
             }
 
-            // TODO: Use MpMethodUtil instead if we decide to make it work with generic types/methods (already in MP Compat, so use it). Or remove this TODO if we decide not to.
+            // Consider using MpMethodUtil for generic types/methods (already in MP Compat)
             CaravanActionConfirmationType = AccessTools.Inner(typeof(CaravanArrivalActionUtility), "<>c__DisplayClass0_1`1");
 
             if (CaravanActionConfirmationType == null) Error($"Could not find type: {nameof(CaravanArrivalActionUtility)}.<>c__DisplayClass0_1<T>");

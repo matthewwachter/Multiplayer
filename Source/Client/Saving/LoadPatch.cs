@@ -27,8 +27,7 @@ namespace Multiplayer.Client
                 Current.Game.LoadGame(); // calls Scribe.loader.FinalizeLoading()
 
                 // Prevent errors when the client is disconnected during loading
-                // todo revisit disconnection during loading
-                // todo loading can be async, concurrency issues
+                // Revisit: disconnection during loading and async loading concurrency
                 if (Multiplayer.Client != null)
                     SessionData.ReadSessionData(gameToLoad.SessionData);
             }

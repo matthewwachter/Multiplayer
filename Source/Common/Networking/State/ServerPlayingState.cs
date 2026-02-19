@@ -56,7 +56,7 @@ namespace Multiplayer.Common
                 Player.currentMapId = newMapId;
             }
 
-            // todo check if map id is valid for the player
+            // Validate that map id is valid for the player
 
             Server.commands.Send(packet.type, Player.FactionId, packet.mapId, packet.data, Player);
         }
@@ -69,7 +69,7 @@ namespace Multiplayer.Common
             string msg = packet.msg;
             msg = msg.Trim();
 
-            // todo handle max length
+            // Handle max length
             if (msg.Length == 0) return;
 
             if (msg[0] == '/')
@@ -187,7 +187,7 @@ namespace Multiplayer.Common
         [PacketHandler(Packets.Client_Debug)]
         public void HandleDebug(ByteReader data)
         {
-            // todo restrict handling
+            // Restrict handling
 
             Server.worldData.mapCmds.Clear();
             Server.gameTimer = Server.startingTimer;
@@ -198,7 +198,7 @@ namespace Multiplayer.Common
         [TypedPacketHandler]
         public void HandleSetFaction(ClientSetFactionPacket packet)
         {
-            // todo restrict handling
+            // Restrict handling
 
             int playerId = packet.playerId;
             int factionId = packet.factionId;

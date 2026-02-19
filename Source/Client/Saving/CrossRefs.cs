@@ -198,7 +198,6 @@ namespace Multiplayer.Client
             foreach (var f in Find.FactionManager.AllFactions)
                 ScribeUtil.sharedCrossRefs.RegisterLoaded(f);
 
-            // todo
             // Handle ideo mutation. This currently assumes that ideos are static during a game.
             // Handling this might only be useful for debug tools
             foreach (var ideo in Find.IdeoManager.IdeosListForReading)

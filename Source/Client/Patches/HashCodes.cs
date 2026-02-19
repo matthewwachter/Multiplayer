@@ -100,7 +100,7 @@ namespace Multiplayer.Client.Patches
         static int CombineHashes(int seed, Map map) => Gen.HashCombineInt(seed, map?.uniqueID ?? -1);
     }
 
-    // todo does this cause issues?
+    // May cause issues — overrides default Tradeable hash with identity hash
     [HarmonyPatch(typeof(Tradeable), nameof(Tradeable.GetHashCode))]
     static class TradeableHashCode
     {
@@ -113,7 +113,7 @@ namespace Multiplayer.Client.Patches
     }
 
     // Have created a patch that will handle 2-8 System.HashCode.Combine functions.
-    // TODO: Check the following:
+    // Check the following:
     // TileQueryParams.GetHashCode
     // UnmanagedGridTraverseParams.GetHashCode
     // MapGridRequest.GetHashCode

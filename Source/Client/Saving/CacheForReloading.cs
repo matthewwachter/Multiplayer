@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Verse;
 
-// TODO: TEST: Test that this works with the new world generation
+// Needs testing with the new world generation
 
 namespace Multiplayer.Client
 {
@@ -143,7 +143,7 @@ namespace Multiplayer.Client
         }
     }
 
-    //TODO: TEST: Test that this works with the new world generation
+    // Needs testing with the new world generation
     [HarmonyPatch(typeof(WorldGrid), (nameof(WorldGrid.InitializeGlobalLayers)))]
     public static class WorldRendererCachePatch
     {

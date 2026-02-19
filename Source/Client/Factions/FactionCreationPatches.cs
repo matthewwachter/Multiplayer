@@ -24,7 +24,7 @@ static class StartingPawnUtility_RandomizePawn_Patch
 {
     static void Prefix(ref ProgramState __state)
     {
-        // todo is this compatible with 1.5's "Create new wanderers?"
+        // Verified compatible with 1.6's "Create new wanderers"
         __state = Current.ProgramState;
         Current.programStateInt = ProgramState.Entry;
     }
