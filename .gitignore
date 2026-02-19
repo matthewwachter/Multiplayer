@@ -273,3 +273,6 @@ Multiplayer*.zip
 !Source/Client/Debug/
 
 /Source/mpdb
+
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json
