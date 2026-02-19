@@ -23,10 +23,54 @@
             color: #e8e8e8;
         }
 
-        /* Move sidebar toggle from bottom-left to top-left */
+        /* Brighten code block text for dark theme */
+        .markdown-section code[class*="language-"],
+        .markdown-section pre[class*="language-"] {
+            color: #c8ccd4;
+        }
+        .token.punctuation {
+            color: #abb2bf;
+        }
+        .token.operator {
+            color: #c678dd;
+        }
+        .token.class-name {
+            color: #e5c07b;
+        }
+        .token.function {
+            color: #61afef;
+        }
+        .token.keyword {
+            color: #c678dd;
+        }
+        .token.string {
+            color: #98c379;
+        }
+        .token.comment {
+            color: #7f848e;
+        }
+        .token.number {
+            color: #d19a66;
+        }
+        .markdown-section code {
+            color: #e06c75;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Sidebar toggle: move to top-left */
         .sidebar-toggle {
             bottom: auto;
             top: 12px;
+            z-index: 5;
+        }
+
+        /* Sticky search bar below toggle, with background so nav scrolls under */
+        .sidebar .search {
+            position: sticky;
+            top: 0;
+            z-index: 4;
+            background-color: #1c2128;
+            padding-top: 3.5rem;
         }
     </style>
 </head>
