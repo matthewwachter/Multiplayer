@@ -10,7 +10,8 @@ public record ServerInitData(
     HashSet<int> DebugOnlySyncCmds,
     HashSet<int> HostOnlySyncCmds,
     (RoundModeEnum, RoundModeEnum) RoundModes,
-    Dictionary<string, DefInfo> DefInfos
+    Dictionary<string, DefInfo> DefInfos,
+    int SyncHandlerHash
 )
 {
     public ClientInitDataPacket ToNet() => new()
@@ -22,6 +23,7 @@ public record ServerInitData(
         staticCtorRoundMode = RoundModes.Item2,
         defInfos = DefInfos.Select(kv => new KeyedDefInfo
             { name = kv.Key, count = kv.Value.count, hash = kv.Value.hash }).ToArray(),
+        syncHandlerHash = SyncHandlerHash,
         rawData = RawData
     };
 
@@ -31,5 +33,6 @@ public record ServerInitData(
         packet.hostOnlySyncCmds.ToHashSet(),
         (packet.modCtorRoundMode, packet.staticCtorRoundMode),
         packet.defInfos.ToDictionary(info => info.name,
-            info => new DefInfo { count = info.count, hash = info.hash }));
+            info => new DefInfo { count = info.count, hash = info.hash }),
+        packet.syncHandlerHash);
 }

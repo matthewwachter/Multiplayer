@@ -20,6 +20,7 @@ public record struct ClientInitDataPacket : IPacket
     public RoundModeEnum modCtorRoundMode;
     public RoundModeEnum staticCtorRoundMode;
     public KeyedDefInfo[] defInfos;
+    public int syncHandlerHash;
     public byte[] rawData;
 
     public void Bind(PacketBuffer buf)
@@ -30,6 +31,7 @@ public record struct ClientInitDataPacket : IPacket
         buf.BindEnum(ref modCtorRoundMode);
         buf.BindEnum(ref staticCtorRoundMode);
         buf.Bind(ref defInfos, BinderOf.Identity<KeyedDefInfo>());
+        buf.Bind(ref syncHandlerHash);
         buf.BindRemaining(ref rawData);
     }
 }

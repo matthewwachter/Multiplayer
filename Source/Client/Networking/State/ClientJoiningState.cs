@@ -53,7 +53,8 @@ namespace Multiplayer.Client
             Sync.handlers.Where(h => h.debugOnly).Select(h => h.syncId).ToHashSet(),
             Sync.handlers.Where(h => h.hostOnly).Select(h => h.syncId).ToHashSet(),
             (MultiplayerData.modCtorRoundMode, MultiplayerData.staticCtorRoundMode),
-            new Dictionary<string, DefInfo>(MultiplayerData.localDefInfos)
+            new Dictionary<string, DefInfo>(MultiplayerData.localDefInfos),
+            Sync.HandlerHash
         );
 
         [PacketHandler(Packets.Server_UsernameOk)]
@@ -63,7 +64,8 @@ namespace Multiplayer.Client
                 modCtorRoundMode = MultiplayerData.modCtorRoundMode,
                 staticCtorRoundMode = MultiplayerData.staticCtorRoundMode,
                 defInfos = MultiplayerData.localDefInfos.Select(kv => new KeyedDefInfo
-                    { name = kv.Key, count = kv.Value.count, hash = kv.Value.hash }).ToArray()
+                    { name = kv.Key, count = kv.Value.count, hash = kv.Value.hash }).ToArray(),
+                syncHandlerHash = Sync.HandlerHash
             }.Serialize());
 
         [TypedPacketHandler]

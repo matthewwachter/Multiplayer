@@ -113,6 +113,12 @@ public class ServerJoiningState : AsyncConnectionState
             return false;
         }
 
+        if (packet.syncHandlerHash != serverInitData.SyncHandlerHash)
+        {
+            Player.Disconnect($"Sync handler hash mismatch: client={packet.syncHandlerHash:X8} server={serverInitData.SyncHandlerHash:X8}");
+            return false;
+        }
+
         var defStatus = new DefCheckStatus[packet.defInfos.Length];
         var defsMatch = true;
 

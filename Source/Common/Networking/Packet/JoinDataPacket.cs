@@ -28,12 +28,14 @@ public record struct ClientJoinDataPacket : IPacket
     public RoundModeEnum modCtorRoundMode;
     public RoundModeEnum staticCtorRoundMode;
     public KeyedDefInfo[] defInfos;
+    public int syncHandlerHash;
 
     public void Bind(PacketBuffer buf)
     {
         buf.BindEnum(ref modCtorRoundMode);
         buf.BindEnum(ref staticCtorRoundMode);
         buf.Bind(ref defInfos, BinderOf.Identity<KeyedDefInfo>(), maxLength: 512);
+        buf.Bind(ref syncHandlerHash);
     }
 }
 
