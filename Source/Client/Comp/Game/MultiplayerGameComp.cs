@@ -4,6 +4,7 @@ using HarmonyLib;
 using Multiplayer.API;
 using Multiplayer.Client.Saving;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using Verse;
 
 namespace Multiplayer.Client.Comp

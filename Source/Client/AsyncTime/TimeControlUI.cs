@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using Multiplayer.Client.Util;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;

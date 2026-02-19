@@ -5,6 +5,7 @@ using Multiplayer.API;
 using Multiplayer.Client.Comp;
 using Multiplayer.Client.Persistent;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using Verse;
 using static Multiplayer.Client.SyncSerialization;

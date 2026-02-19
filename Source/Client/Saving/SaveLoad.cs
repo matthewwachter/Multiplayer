@@ -1,5 +1,6 @@
 using Ionic.Zlib;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using RimWorld.Planet;
 using System.Collections.Generic;
@@ -57,7 +58,6 @@ namespace Multiplayer.Client
                 gameData = SaveGameData();
             }
 
-            // TODO
             //MapDrawerRegenPatch.copyFrom = drawers;
             //WorldGridCachePatch.copyFrom = worldGridSaved;
             //WorldGridExposeDataPatch.copyFrom = worldGridSaved;

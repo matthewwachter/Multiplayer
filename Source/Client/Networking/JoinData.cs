@@ -8,6 +8,7 @@ using HarmonyLib;
 using Ionic.Zlib;
 using Multiplayer.Client.EarlyPatches;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using Steamworks;
 using Verse;

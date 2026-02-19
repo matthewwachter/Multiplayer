@@ -6,6 +6,7 @@ using HarmonyLib;
 using Multiplayer.Client.Saving;
 using Multiplayer.Client.Util;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using RimWorld;
 using UnityEngine;
 using Verse;

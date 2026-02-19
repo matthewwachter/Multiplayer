@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Multiplayer.Client.AsyncTime;
 using Multiplayer.Client.Util;
+using Multiplayer.Common.Util;
 using RimWorld.QuestGen;
 using UnityEngine;
 using Verse;

@@ -5,6 +5,7 @@ using HarmonyLib;
 using Multiplayer.API;
 using Multiplayer.Client.Util;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using MultiplayerLoader;
 using Verse;
 
