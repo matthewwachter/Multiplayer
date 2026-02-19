@@ -20,12 +20,35 @@ namespace Multiplayer.Client
 
         static Dictionary<string, SyncField> registeredSyncFields = new();
 
+        public static int HandlerHash { get; private set; }
+
         public static void PostInitHandlers()
         {
             handlers.SortStable((a, b) => a.version.CompareTo(b.version));
 
             for (int i = 0; i < handlers.Count; i++)
                 handlers[i].syncId = i;
+
+            HandlerHash = ComputeHandlerHash();
+        }
+
+        static int ComputeHandlerHash()
+        {
+            int hash = 0;
+            foreach (var handler in handlers)
+            {
+                string identity = handler switch
+                {
+                    SyncDelegate sd => sd.method.MethodDesc() + sd.version,
+                    SyncMethod sm => sm.method.MethodDesc() + sm.version,
+                    SyncField sf => sf.memberPath + sf.fieldType.type + sf.version,
+                    _ => handler.GetType().FullName + handler.version
+                };
+
+                hash = GenText.StableStringHash(identity) ^ (hash * 31);
+            }
+
+            return hash;
         }
 
         public static SyncMethod Method(Type targetType, string methodName, SyncType[] argTypes = null)

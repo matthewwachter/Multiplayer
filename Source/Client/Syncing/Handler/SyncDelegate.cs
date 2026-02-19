@@ -7,6 +7,7 @@ using HarmonyLib;
 using Multiplayer.API;
 using Multiplayer.Client.Util;
 using Multiplayer.Common;
+using Multiplayer.Common.Util;
 using Verse;
 
 namespace Multiplayer.Client
@@ -186,6 +187,30 @@ namespace Multiplayer.Client
 
         public override void Validate()
         {
+            // Verify the lambda/delegate method was resolved successfully
+            if (method == null)
+                throw new Exception($"Method resolution failed for {this}");
+
+            // Verify the declaring type (closure class) contains the expected captured fields
+            if (method.DeclaringType != null && fieldPathsNoTypes != null)
+            {
+                var closureType = method.DeclaringType;
+                foreach (var fieldPath in fieldPathsNoTypes)
+                {
+                    // Only validate top-level fields on the closure type (not nested paths)
+                    var parts = fieldPath.Split('/');
+                    if (parts.Length >= 2)
+                    {
+                        var fieldName = parts[parts.Length - 1];
+                        if (closureType.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) == null &&
+                            !closureType.IsCompilerGenerated())
+                        {
+                            Log.Warning($"SyncDelegate {method.MethodDesc()}: field '{fieldName}' not found on declaring type {closureType.Name}");
+                        }
+                    }
+                }
+            }
+
             for (int i = 0; i < fieldTypes.Length; i++)
                 if (fieldTransformers[i] is SyncTransformer tr)
                     ValidateType($"Field {fieldPaths[i]} type", tr.networkType);
