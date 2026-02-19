@@ -16,7 +16,7 @@ The RimWorld Multiplayer mod allows users to play full games of Rimworld coopera
 [Hosting](https://hackmd.io/@rimworldmultiplayer/docs/https%3A%2F%2Fhackmd.io%2F%40rimworldmultiplayer%2Fplay%23Installation#Hosting-and-Joining) |
 [FAQ](https://hackmd.io/@rimworldmultiplayer/docs/https%3A%2F%2Fhackmd.io%2F%40rimworldmultiplayer%2Ffaq%23Common-Questions#FAQ) |
 [Contributing](https://github.com/rwmt/Multiplayer/blob/master/CONTRIBUTORS.md) |
-[DEV Wiki](https://hackmd.io/@rimworldmultiplayer/docs/https%3A%2F%2Fhackmd.io%2F%40rimworldmultiplayer%2Fdev-home)
+[Developer Docs](https://rwmt.github.io/Multiplayer/)
 
 Please do all pull requests to the [dev](https://github.com/rwmt/Multiplayer/tree/dev) branch.
 

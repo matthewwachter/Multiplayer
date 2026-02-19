@@ -47,3 +47,6 @@ See [CONTRIBUTORS.md](https://github.com/rwmt/Multiplayer/blob/dev/CONTRIBUTORS.
 | [Networking](networking) | Connection state machine, packet protocol, join flow, fragmentation |
 | [Async Time](async-time) | ITickable, per-map ticking, command queues, RNG state tracking, time speed voting |
 | [Desync Detection](desync-detection) | SyncCoordinator, opinion comparison, auto-rejoin, diagnostics |
+| [Dev Environment Setup](dev-setup) | Prerequisites, building, testing, debugging with dnSpy, duplicate installs, IDE tips |
+| [Multiplayer API](multiplayer-api) | Public API for third-party mod compatibility — attributes, programmatic registration, field watching |
+| [Localization](localization) | Languages submodule, translation keys, `.Translate()` usage, contributing translations |
