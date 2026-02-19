@@ -76,6 +76,8 @@ public static class MpSettingsUI
         listing.CheckboxLabeled("MpEnableCrossPlanetLayerPings".Translate(), ref settings.enableCrossPlanetLayerPings,
             "MpEnableCrossPlanetLayerPingsDesc".Translate());
         listing.CheckboxLabeled("MpShowMainMenuAnimation".Translate(), ref settings.showMainMenuAnim);
+        listing.CheckboxLabeled("MpAutoRejoinOnDesync".Translate(), ref settings.autoRejoinOnDesync,
+            "MpAutoRejoinOnDesyncDesc".Translate());
 
         const string buttonOff = "Off";
 

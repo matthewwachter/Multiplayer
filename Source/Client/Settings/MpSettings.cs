@@ -35,6 +35,7 @@ namespace Multiplayer.Client
 
         public bool hideOtherPlayersInColonistBar = false;
         public bool hideOtherPlayersQuests = false;
+        public bool autoRejoinOnDesync = true;
 
 
         internal static readonly ColorRGBClient[] DefaultPlayerColors =
@@ -77,6 +78,7 @@ namespace Multiplayer.Client
             Scribe_Values.Look(ref transparentPlayerCursors, "transparentPlayerCursors", true);
             Scribe_Values.Look(ref hideOtherPlayersInColonistBar, "hideOtherPlayersInColonistBar");
             Scribe_Values.Look(ref hideOtherPlayersQuests, "hideOtherPlayersQuests");
+            Scribe_Values.Look(ref autoRejoinOnDesync, "autoRejoinOnDesync", true);
 
 
             Scribe_Collections.Look(ref playerColors, "playerColors", LookMode.Deep);
