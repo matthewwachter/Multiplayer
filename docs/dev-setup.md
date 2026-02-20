@@ -4,15 +4,50 @@ This guide covers setting up a development environment for contributing to the R
 
 ## Prerequisites
 
-- **.NET SDK** — .NET 8.0+ SDK (includes .NET Framework 4.8 targeting pack on Windows; on macOS/Linux, Mono provides the framework)
-- **IDE** — Visual Studio 2022, JetBrains Rider, or VS Code with the C# Dev Kit extension
-- **RimWorld** (optional) — NuGet references (`Krafs.Rimworld.Ref`) mean you can build without a game install, but you need RimWorld to test in-game
+### .NET 8.0+ SDK
+
+Install the .NET 8.0 SDK (or newer) for your platform:
+
+- **Windows:** `winget install Microsoft.DotNet.SDK.8`
+- **macOS:** `brew install dotnet-sdk`
+- **Any platform:** Download from https://dotnet.microsoft.com/download/dotnet/8.0
+
+Verify the installation:
+
+```bash
+dotnet --version
+# Should print 8.0.x or higher
+```
+
+> **Note:** You do not need to install .NET Framework 4.8 separately. The SDK handles cross-targeting via NuGet reference assemblies.
+
+### IDE
+
+Use any of the following:
+
+- **Visual Studio 2022** (Windows)
+- **JetBrains Rider** (cross-platform)
+- **VS Code** with the [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) extension
+
+### RimWorld (optional)
+
+NuGet references (`Krafs.Rimworld.Ref`) mean you can build without a game install, but you need RimWorld to test in-game.
 
 ## Cloning
 
-Clone the repository. If you plan to test in-game, cloning directly into your RimWorld `Mods/` directory is convenient but not required:
+You can clone the repository anywhere — NuGet references (`Krafs.Rimworld.Ref`) mean the build doesn't depend on a game install. However, if you plan to test in-game, cloning directly into RimWorld's `Mods/` directory is the easiest way to get the mod loaded:
+
+- **Windows (Steam):** `C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\`
+- **macOS (Steam):** `~/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Mods/`
+- **Linux (Steam):** `~/.steam/steam/steamapps/common/RimWorld/Mods/`
 
 ```bash
+# Clone into Mods/ for in-game testing
+cd /path/to/RimWorld/Mods
+git clone https://github.com/rwmt/Multiplayer.git
+cd Multiplayer
+
+# Or clone anywhere if you only need to build
 git clone https://github.com/rwmt/Multiplayer.git
 cd Multiplayer
 

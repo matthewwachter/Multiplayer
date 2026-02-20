@@ -9,23 +9,9 @@ The RimWorld Multiplayer mod enables cooperative multiplayer gameplay in RimWorl
 - [GitHub](https://github.com/rwmt/Multiplayer)
 - [Website](https://rimworldmultiplayer.com)
 
-## Building & Testing
+## Getting Started
 
-```bash
-# Build all projects (debug)
-dotnet build Source/
-
-# Build release
-dotnet build Source/ --configuration Release
-
-# Run tests
-dotnet test Source/ --no-restore
-
-# Run a single test
-dotnet test Source/ --no-restore --filter "FullyQualifiedName~TestClassName.TestMethodName"
-```
-
-The solution is at `Source/Multiplayer.sln`. Building copies DLLs to `Assemblies/` and `AssembliesCustom/` via MSBuild targets.
+See [Dev Environment Setup](dev-setup) for prerequisites, building, testing, and debugging.
 
 ## Contributing
 
@@ -41,12 +27,12 @@ See [CONTRIBUTORS.md](https://github.com/rwmt/Multiplayer/blob/dev/CONTRIBUTORS.
 
 | Page | Description |
 |------|-------------|
+| [Dev Environment Setup](dev-setup) | Prerequisites, building, testing, debugging with dnSpy, duplicate installs, IDE tips |
 | [Architecture](architecture) | Projects, key statics, initialization flow, how subsystems connect |
 | [Sync System](sync-system) | SyncField, SyncMethod, SyncDelegate, SyncAction — how player actions become synced commands |
 | [Serialization](serialization) | SyncWorkerDictionaryTree, handler chains, how to add a new type serializer |
 | [Networking](networking) | Connection state machine, packet protocol, join flow, fragmentation |
 | [Async Time](async-time) | ITickable, per-map ticking, command queues, RNG state tracking, time speed voting |
 | [Desync Detection](desync-detection) | SyncCoordinator, opinion comparison, auto-rejoin, diagnostics |
-| [Dev Environment Setup](dev-setup) | Prerequisites, building, testing, debugging with dnSpy, duplicate installs, IDE tips |
 | [Multiplayer API](multiplayer-api) | Public API for third-party mod compatibility — attributes, programmatic registration, field watching |
 | [Localization](localization) | Languages submodule, translation keys, `.Translate()` usage, contributing translations |
