@@ -57,10 +57,12 @@ static class Program
         Console.WriteLine(test.GetField().b);
     }
 
+#pragma warning disable CS1717 // Assignment made to same variable
     public static void GenericPostfix(ref SomeClass __result)
     {
         __result = __result;
     }
+#pragma warning restore CS1717
 
     class TestClass<S>
     {
@@ -95,6 +97,7 @@ static class Program
         public int b;
     }
 
+#pragma warning disable CS0649 // Field is never assigned to
     public class SomeClass2
     {
         public int a;
@@ -102,7 +105,9 @@ static class Program
         [MethodImpl(MethodImplOptions.NoInlining)]
         public int GetA() => a;
     }
+#pragma warning restore CS0649
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value
     class TestClassForPatches<T>
     {
         public T field;
@@ -110,4 +115,5 @@ static class Program
         [MethodImpl(MethodImplOptions.NoInlining)]
         public T GetField() => field;
     }
+#pragma warning restore CS8618
 }

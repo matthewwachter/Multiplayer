@@ -6,8 +6,8 @@ namespace Multiplayer.Common
 {
     public class ServerSettings
     {
-        public string gameName;
-        public string lanAddress;
+        public string gameName = "";
+        public string lanAddress = "";
 
         public string directAddress = $"0.0.0.0:{MultiplayerServer.DefaultPort}";
         public int maxPlayers = 8;

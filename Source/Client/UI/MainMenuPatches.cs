@@ -130,6 +130,7 @@ namespace Multiplayer.Client
         static void ShowModDebugInfo()
         {
             return;
+#pragma warning disable CS0162 // Unreachable code detected
 
             var info = new RemoteData();
             JoinData.ReadServerData(JoinData.WriteServerData(true), info);
@@ -139,6 +140,7 @@ namespace Multiplayer.Client
             //info.remoteFiles.Add("ludeon.rimworld", new ModFile() { relPath = "/Test/Test.xml" });
 
             Find.WindowStack.Add(new JoinDataWindow(info));
+#pragma warning restore CS0162
         }
 
         public static void AskQuitToMainMenu()

@@ -23,8 +23,10 @@ public static class VersionChecker
                 {
                     latestContinuousRelease = await GetLatestContinuousRelease();
                     if (MpVersion.IsDebug) return;
+#pragma warning disable CS0162 // Unreachable code detected
                     if (latestContinuousRelease is { IsInstalled: false } release)
                         Log.Warning($"Newer Multiplayer version is available at {release.html_url}");
+#pragma warning restore CS0162
                 }
             }
             catch (Exception e)
@@ -56,6 +58,7 @@ public static class VersionChecker
     public static void OpenNewVersionDialogIfApplicable()
     {
         if (MpVersion.IsDebug) return;
+#pragma warning disable CS0162 // Unreachable code detected
         var release = latestContinuousRelease;
         if (!isContinuousRelease || release is not { IsInstalled: false }) return;
         var dialog =
@@ -66,6 +69,7 @@ public static class VersionChecker
                 "Remind me later",
                 () => { });
         Find.WindowStack.Add(dialog);
+#pragma warning restore CS0162
     }
 
     public class Release

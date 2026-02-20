@@ -205,8 +205,10 @@ public class ExtensionsTest
         C = 4,
     }
 
+#pragma warning disable CS0649 // Field is never assigned to
     private struct TestStruct
     {
         public int X;
     }
+#pragma warning restore CS0649
 }

@@ -22,10 +22,12 @@ namespace MultiplayerLoader
             FindTypeInAppDomain("Multiplayer.Client.Multiplayer")!.GetMethod("InitMultiplayer")!.Invoke(null, [content]);
         }
 
+#nullable enable
         public static Type? FindTypeInAppDomain(string typeFullName) =>
             AppDomain.CurrentDomain.GetAssemblies()
                 .Select(assembly => assembly.GetType(typeFullName, throwOnError: false, ignoreCase: false))
                 .FirstOrDefault(type => type != null);
+#nullable restore
 
         private void LoadAssembliesCustom()
         {

@@ -250,7 +250,7 @@ namespace Multiplayer.Common
             var pos = data.Position;
             try
             {
-                handler.Method(StateObj, data);
+                handler.Method(StateObj!, data);
             }
             catch (Exception e)
             {

@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>12</LangVersion>
+        <NoWarn>NU1701;NU1702</NoWarn>
 
         <IsPackable>false</IsPackable>
     </PropertyGroup>

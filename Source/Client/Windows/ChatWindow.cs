@@ -164,6 +164,7 @@ namespace Multiplayer.Client
         private void ClickPlayer(PlayerInfo p)
         {
             return;
+#pragma warning disable CS0162 // Unreachable code detected
 
             if (p.id == 0 && Event.current.button == 1)
             {
@@ -172,6 +173,7 @@ namespace Multiplayer.Client
                     //new FloatMenuOption("MpSeeModList".Translate(), () => DefMismatchWindow.ShowModList(Multiplayer.session.mods))
                 }));
             }
+#pragma warning restore CS0162
         }
 
         private Color GetColor(PlayerStatus status)

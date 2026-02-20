@@ -16,7 +16,6 @@ namespace Multiplayer.Client
         private readonly SaveableDesyncInfo desyncInfo;
         private float openedAt;
         private bool infoWritten;
-        private bool rejoining;
 
         public DesyncedWindow(string text, SaveableDesyncInfo desyncInfo)
         {
@@ -56,7 +55,7 @@ namespace Multiplayer.Client
             GUI.BeginGroup(buttonsRect);
 
             float x = 0;
-            if (Widgets.ButtonText(new Rect(x, 0, 120, 35), "MpTryResync".Translate()) && !rejoining)
+            if (Widgets.ButtonText(new Rect(x, 0, 120, 35), "MpTryResync".Translate()))
             {
                 Log.Message("Multiplayer: requesting rejoin");
                 Rejoiner.DoRejoin();

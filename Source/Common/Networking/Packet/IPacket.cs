@@ -77,7 +77,7 @@ public static class BinderExtensions
 
     public static T Deserialize<T>(this Binder<T> binder, byte[] src)
     {
-        var obj = default(T);
+        var obj = default(T)!;
         binder(new PacketReader(new ByteReader(src)), ref obj);
         return obj;
     }
@@ -187,7 +187,7 @@ public sealed class PacketReader(ByteReader reader) : PacketBuffer(false)
         obj = new T[len];
         for (var i = 0; i < len; i++)
         {
-            var item = default(T);
+            var item = default(T)!;
             bind(this, ref item);
             obj[i] = item;
         }
@@ -207,7 +207,7 @@ public sealed class PacketReader(ByteReader reader) : PacketBuffer(false)
         obj = new List<T>(len);
         for (var i = 0; i < len; i++)
         {
-            var item = default(T);
+            var item = default(T)!;
             bind(this, ref item);
             obj.Add(item);
         }
@@ -222,10 +222,10 @@ public sealed class PacketReader(ByteReader reader) : PacketBuffer(false)
         obj = new Dictionary<K, V>(len);
         for (int i = 0; i < len; i++)
         {
-            var key = default(K);
+            var key = default(K)!;
             bindKey(this, ref key);
 
-            var value = default(V);
+            var value = default(V)!;
             bindValue(this, ref value);
             obj.Add(key, value);
         }

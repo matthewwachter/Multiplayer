@@ -18,7 +18,7 @@ public class XmlExtensionsTest
         var doc = CreateDoc("<root/>");
         doc.DocumentElement!.AddNode("child", "value");
 
-        var child = doc.DocumentElement["child"];
+        var child = doc.DocumentElement!["child"];
         Assert.That(child, Is.Not.Null);
         Assert.That(child!.InnerText, Is.EqualTo("value"));
     }
@@ -48,7 +48,7 @@ public class XmlExtensionsTest
         var doc = CreateDoc("<root><child>text</child></root>");
         doc.DocumentElement!.RemoveChildIfPresent("child");
 
-        Assert.That(doc.DocumentElement["child"], Is.Null);
+        Assert.That(doc.DocumentElement!["child"], Is.Null);
     }
 
     [Test]
@@ -64,7 +64,7 @@ public class XmlExtensionsTest
         var doc = CreateDoc("<root><a/><b/><a/></root>");
         doc.DocumentElement!.SelectAndRemove("a");
 
-        var remaining = doc.DocumentElement.ChildNodes;
+        var remaining = doc.DocumentElement!.ChildNodes;
         Assert.That(remaining.Count, Is.EqualTo(1));
         Assert.That(remaining[0]!.Name, Is.EqualTo("b"));
     }
