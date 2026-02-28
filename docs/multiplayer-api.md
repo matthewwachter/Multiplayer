@@ -266,6 +266,89 @@ MP.SetThingFilterContext(ThingFilterContext context);
 MP.RegisterDefaultLetterChoice(MethodInfo method, Type letterType = null);
 ```
 
+## Config Sync Exclusions
+
+By default, the multiplayer mod synchronizes mod config files between host and joining clients to ensure determinism. Some mods should be excluded from this — for example, mods that store user-specific data (usernames, API keys), mods with purely cosmetic settings, or mods that handle their own settings sync.
+
+### About.xml Declaration
+
+The simplest way to exclude your mod from config sync is to add an element to your mod's `About/About.xml`:
+
+```xml
+<ModMetaData>
+    <name>My Mod</name>
+    <packageId>author.mymod</packageId>
+    <!-- ... other fields ... -->
+    <mpDoNotSyncConfig>true</mpDoNotSyncConfig>
+</ModMetaData>
+```
+
+This is scanned at startup and requires no code changes.
+
+### Programmatic Registration
+
+You can also exclude a mod from config sync at runtime:
+
+```csharp
+JoinData.AddIgnoredConfigMod("author.mymod");
+```
+
+The package ID is case-insensitive. This is useful when a mod needs to decide at runtime whether its config should be synced.
+
+## Session Lifecycle
+
+Sessions represent ongoing multiplayer interactions like trading, caravan forming, or rituals. The mod provides several base classes:
+
+| Base Class | Persistence | Use Case |
+|------------|-------------|----------|
+| `Session` | Saved with game | Long-running sessions that survive save/load (e.g., trade dialogs) |
+| `SemiPersistentSession` | Not saved | Temporary sessions that are lost on save/load |
+| `ITickingSession` | Interface | Add to either session type to receive `Tick()` calls each game tick |
+
+Session constructors must be parameterless (for deserialization). Use `PostAddSession()` for initialization that requires arguments. Sessions are managed by `SessionManager` — one global (world-level) and one per map. Access them via `MP.GetGlobalSessionManager()` and `MP.GetLocalSessionManager(map)`.
+
+## SyncContext Values
+
+`SyncContext` flags control what additional context is captured and restored when a synced method executes on remote clients:
+
+| Flag | Effect |
+|------|--------|
+| `None` | No additional context (default) |
+| `CurrentMap` | Captures and restores `Find.CurrentMap` |
+| `MapMouseCell` | Captures mouse cell position; implies `CurrentMap` |
+| `MapSelected` | Captures selected objects on the map |
+| `WorldSelected` | Captures selected world objects |
+| `QueueOrder_Down` | Captures whether the queue-order key (Shift) is held |
+
+Use `SetContext()` when your synced method depends on UI state that won't be available on the receiving client:
+
+```csharp
+MP.RegisterSyncMethod(typeof(MyClass), "DoAction")
+    .SetContext(SyncContext.MapSelected);
+```
+
+## Lambda Ordinals and Game Updates
+
+When syncing lambdas with `RegisterSyncMethodLambda` or `RegisterSyncDelegateLambda`, the `lambdaOrdinal` parameter identifies which lambda in the parent method to target. This is the zero-based index of the lambda in the compiler-generated closure classes.
+
+**Fragility warning:** Lambda ordinals can change when RimWorld updates if Ludeon adds, removes, or reorders lambdas in the parent method. When this happens, your sync handler will target the wrong code or fail to find the lambda entirely.
+
+Best practices:
+- Use `SetVersion(n)` to mark handlers that have been updated for a game version change. This prevents protocol mismatches between players on different mod versions.
+- Prefer `RegisterSyncDelegateLocalFunc` (local functions with stable names) over lambda ordinals when possible.
+- After a RimWorld update, verify lambda ordinals by inspecting the decompiled game code (e.g., with ILSpy/dnSpy).
+
+## HandlerHash and Protocol Compatibility
+
+When a client connects, the server compares sync handler hashes (`Sync.HandlerHash`) to verify both sides have identical sync handler registrations. If they differ, the connection is rejected with a "Sync handler hash mismatch" error.
+
+The handler hash changes when:
+- Sync handlers are added, removed, or reordered
+- Handler types or parameters change
+- The mod list differs (different mods register different handlers)
+
+All players in a session must run identical mod lists with identical versions to ensure matching handler hashes.
+
 ## Implementation
 
 The API is implemented by `MultiplayerAPIBridge` (`Source/Client/MultiplayerAPIBridge.cs`), which delegates to the internal sync system. The bridge is discovered by the API assembly at runtime via the type name `Multiplayer.Common.MultiplayerAPIBridge`.

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using HarmonyLib;
 using Ionic.Zlib;
 using Multiplayer.Client.EarlyPatches;
@@ -127,10 +128,8 @@ namespace Multiplayer.Client
             return ModLister.GetModWithIdentifier(id);
         }
 
-        [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public static string[] ignoredConfigsModIds =
+        public static readonly HashSet<string> ignoredConfigsModIds = new(StringComparer.OrdinalIgnoreCase)
         {
-            // todo unhardcode it
             "rwmt.multiplayer",
             "hodlhodl.twitchtoolkit", // contains username
             "dubwise.dubsmintmenus",
@@ -146,8 +145,12 @@ namespace Multiplayer.Client
             "derekbickley.ltocolonygroupsfinal",
             "dra.multiplayercustomtickrates", // syncs its own settings
             "merthsoft.designatorshapes", // settings for UI and stuff meaningless for MP
-            //"zetrith.prepatcher",
         };
+
+        public static void AddIgnoredConfigMod(string packageId)
+        {
+            ignoredConfigsModIds.Add(packageId.ToLowerInvariant());
+        }
 
         public const string TempConfigsDir = "MultiplayerTempConfigs";
         public const string HugsLibId = "unlimitedhugs.hugslib";
@@ -220,6 +223,28 @@ namespace Multiplayer.Client
         {
             activeModsSnapshot = ModsConfig.ActiveModsInLoadOrder.ToList();
             modFilesSnapshot = GetModFiles(activeModsSnapshot.Select(m => m.PackageIdNonUnique));
+            ScanModAboutForConfigExclusions();
+        }
+
+        private static void ScanModAboutForConfigExclusions()
+        {
+            foreach (var mod in activeModsSnapshot)
+            {
+                try
+                {
+                    var aboutPath = Path.Combine(mod.RootDir.FullName, "About", "About.xml");
+                    if (!File.Exists(aboutPath)) continue;
+
+                    var doc = XDocument.Load(aboutPath);
+                    var element = doc.Root?.Element("mpDoNotSyncConfig");
+                    if (element != null && bool.TryParse(element.Value, out var val) && val)
+                        ignoredConfigsModIds.Add(mod.PackageIdNonUnique);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning($"Multiplayer: Failed to read About.xml for {mod.PackageIdNonUnique}: {e.Message}");
+                }
+            }
         }
 
         internal static ModFileDict GetModFiles(IEnumerable<string> modIds)

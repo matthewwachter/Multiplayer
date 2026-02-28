@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Multiplayer.Client.Desyncs;
 using Verse;
+using System.Reflection;
 
 namespace Multiplayer.Client
 {
@@ -64,7 +65,17 @@ namespace Multiplayer.Client
                     if (!methodNameCache.TryGetValue(addr, out string method))
                         methodNameCache[addr] = method = Native.MethodNameFromAddr(raw[i], false);
 
-                    builder.AppendLine(method != null ? SyncCoordinator.MethodNameWithIL(method) : "Null");
+                    var line = method != null ? SyncCoordinator.MethodNameWithIL(method) : "Null";
+
+                    var methodBase = Native.MethodBaseFromAddr(addr, false);
+                    if (methodBase?.DeclaringType?.Assembly is { } asm)
+                    {
+                        var modName = ModAssemblyLookup.GetModName(asm);
+                        if (modName != null)
+                            line = $"[{modName}] {line}";
+                    }
+
+                    builder.AppendLine(line);
                 }
 
                 return builder.ToString();

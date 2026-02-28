@@ -92,12 +92,12 @@ public static class RwSerialization
         );
 
         // Multiplayer.API.ISyncSimple serialization
-        // todo null handling for ISyncSimple?
         Multiplayer.serialization.AddSerializationHook(
             syncType => typeof(ISyncSimple).IsAssignableFrom(syncType.type),
             (data, _) =>
             {
                 ushort typeIndex = data.ReadUShort();
+                if (typeIndex == ushort.MaxValue) return null;
                 var objType = ApiSerialization.syncSimples[typeIndex];
                 var obj = MpUtil.NewObjectNoCtor(objType);
                 foreach (var field in AccessTools.GetDeclaredFields(objType))
@@ -106,7 +106,8 @@ public static class RwSerialization
             },
             (data, obj, _) =>
             {
-                data.WriteUShort((ushort)ApiSerialization.syncSimples.FindIndex(obj!.GetType()));
+                if (obj == null) { data.WriteUShort(ushort.MaxValue); return; }
+                data.WriteUShort((ushort)ApiSerialization.syncSimples.FindIndex(obj.GetType()));
                 foreach (var field in AccessTools.GetDeclaredFields(obj.GetType()))
                     SyncSerialization.WriteSyncObject(data, field.GetValue(obj), field.FieldType);
             }

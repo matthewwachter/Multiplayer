@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using HarmonyLib;
+using Multiplayer.Client.Desyncs;
 using Multiplayer.Client.Networking;
 using Multiplayer.Client.Patches;
 using Multiplayer.Client.Util;
@@ -116,6 +117,8 @@ namespace Multiplayer.Client
 
             using (DeepProfilerWrapper.Section("Multiplayer TakeModDataSnapshot"))
                 JoinData.TakeModDataSnapshot();
+
+            ModAssemblyLookup.Build();
 
             using (DeepProfilerWrapper.Section("MultiplayerData PrecacheMods"))
                 MultiplayerData.PrecacheMods();

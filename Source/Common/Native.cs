@@ -74,7 +74,7 @@ namespace Multiplayer.Client
             }
         }
 
-        private static IntPtr MaybeFindHarmonyOriginalMethod(long addr, bool harmonyOriginals)
+        internal static IntPtr MaybeFindHarmonyOriginalMethod(long addr, bool harmonyOriginals)
         {
             var ji = mono_jit_info_table_find(DomainPtr, (IntPtr)addr);
             if (ji == IntPtr.Zero) return IntPtr.Zero;
@@ -104,6 +104,18 @@ namespace Multiplayer.Client
         {
             var ptr = MaybeFindHarmonyOriginalMethod(addr, harmonyOriginals);
             return ptr == IntPtr.Zero ? null : mono_method_get_reflection_name(ptr);
+        }
+
+        public static MethodBase? MethodBaseFromAddr(long addr, bool harmonyOriginals)
+        {
+            var ptr = MaybeFindHarmonyOriginalMethod(addr, harmonyOriginals);
+            if (ptr == IntPtr.Zero) return null;
+            try
+            {
+                var rmh = (RuntimeMethodHandle)runtimeMethodHandleCtor.Invoke(new[] { (object)ptr });
+                return MethodBase.GetMethodFromHandle(rmh, new RuntimeTypeHandle());
+            }
+            catch { return null; }
         }
 
         private static ConstructorInfo runtimeMethodHandleCtor = AccessTools.Constructor(typeof(RuntimeMethodHandle), new[]{typeof(IntPtr)});

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -35,7 +36,7 @@ namespace Multiplayer.Client
         protected SyncTransformer[] argTransformers;
 
         private int minTime = 100; // Milliseconds between resends
-        private long lastSendTime;
+        private Dictionary<int, long> lastSendTimeByTarget = new();
 
         private bool cancelIfAnyArgNull;
         private bool cancelIfNoSelectedMapObjects;
@@ -76,9 +77,10 @@ namespace Multiplayer.Client
             if (!Multiplayer.ShouldSync)
                 return false;
 
-            // todo limit per specific target/argument
-            //if (Utils.MillisNow - lastSendTime < minTime)
-            //    return true;
+            int targetKey = target?.GetHashCode() ?? 0;
+            if (lastSendTimeByTarget.TryGetValue(targetKey, out var lastSend) &&
+                Utils.MillisNow - lastSend < minTime)
+                return true;
 
             LoggingByteWriter writer = new LoggingByteWriter();
             MpContext context = writer.MpContext();
@@ -132,7 +134,7 @@ namespace Multiplayer.Client
 
             SendSyncCommand(mapId, writer);
 
-            lastSendTime = Utils.MillisNow;
+            lastSendTimeByTarget[targetKey] = Utils.MillisNow;
 
             return true;
         }

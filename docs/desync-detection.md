@@ -189,6 +189,7 @@ Provides manual recovery options:
 | `host_traces.txt` | Stack traces from the server/host |
 | `local_logs.txt` | Game logs (privacy-redacted: paths, IDs, renderer info removed) |
 | `local_metadata.txt` | Active mods list and Harmony patch summary |
+| `diverging_patches.txt` | Harmony patches on methods in the diverging stack trace (only when divergence point is found) |
 | `replay.rwmts` | Game replay file (if `includeReplayInDesync` setting enabled) |
 
 ZIPs are saved to `Multiplayer.DesyncsDir` as `Desync-{N:00}.zip`, auto-incrementing. Only the 10 most recent files are kept.
@@ -203,7 +204,17 @@ When a desync occurs, `FindTraceHashesDiffTick()` locates the first trace hash t
 - Faction context
 - Call depth
 - Thing context (if applicable)
-- Full stack trace
+- Full stack trace (with mod attribution — each frame from a mod assembly is prefixed with `[ModName]`)
+
+### Reading Desync Reports
+
+When analyzing a desync ZIP, follow this workflow:
+
+1. **Open `desync_info`** — check mod versions, player count, and whether debug mode is active.
+2. **Open `local_traces.txt`** — look for the divergence point (the trace at `diffAt`). Each stack frame from a third-party mod is annotated with `[ModName]`, making it easy to identify which mod owns the diverging code.
+3. **Open `diverging_patches.txt`** (if present) — this lists all Harmony patches (prefixes, postfixes, transpilers, finalizers) on every method in the diverging stack trace. A third-party mod's patch on a vanilla method is a common desync cause.
+4. **Open `local_metadata.txt`** — cross-reference the mod list and Harmony patch summary with the diverging trace.
+5. **Compare with host traces** — `host_traces.txt` shows the server's perspective. The divergence point should match; differences in the stack trace reveal which side deviated.
 
 ## Determinism Patches
 

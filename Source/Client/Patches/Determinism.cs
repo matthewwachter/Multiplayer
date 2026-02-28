@@ -331,7 +331,7 @@ namespace Multiplayer.Client.Patches
                 yield return inst;
             }
 
-            const int expectedPatches = 1;
+            const int expectedPatches = 2;
             if (patchCount != expectedPatches)
                 Log.Error($"Patching {nameof(CheckWhetherBiotechIsActive)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }
@@ -674,7 +674,7 @@ namespace Multiplayer.Client.Patches
                 }
             }
 
-            const int expectedPatches = 1;
+            const int expectedPatches = 2;
             if (patchCount != expectedPatches)
                 Log.Error($"Patching {nameof(DeterministicUndercaveRockCollapse)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }

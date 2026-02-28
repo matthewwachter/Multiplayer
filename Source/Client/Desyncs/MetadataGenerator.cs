@@ -138,6 +138,8 @@ public static class MetadataGenerator
         try
         {
             var assemblyFilePath = fileHandle?.FullName ?? assembly.Location;
+            if (string.IsNullOrEmpty(assemblyFilePath))
+                return (ToSemanticString(assembly.GetName().Version), null);
             var fileInfo = FileVersionInfo.GetVersionInfo(assemblyFilePath);
 
             return (ToSemanticString(assembly.GetName().Version), ToSemanticString(new Version(fileInfo.FileVersion)));

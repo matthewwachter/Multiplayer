@@ -31,7 +31,7 @@ namespace Multiplayer.Client
                 }
             }
 
-            const int expectedPatches = 1;
+            const int expectedPatches = 2;
             if (patchCount != expectedPatches)
                 Log.Error($"Patching {nameof(JobTrackerStartFixFrames)} failed (expected: {expectedPatches}, patched: {patchCount}). Was the original method changed?");
         }

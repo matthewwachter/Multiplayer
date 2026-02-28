@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,6 +68,13 @@ public class SaveableDesyncInfo(
             if (extraLogs != null) zip.AddEntry("local_logs.txt", extraLogs);
 
             zip.AddEntry("local_metadata.txt", metadata.Result);
+
+            if (diffAt != -1)
+            {
+                var patchSummary = GetDivergingMethodPatchSummary();
+                if (patchSummary != null)
+                    zip.AddEntry("diverging_patches.txt", patchSummary);
+            }
 
             try
             {
@@ -152,6 +161,58 @@ public class SaveableDesyncInfo(
             .AppendLine($"OS Name and Version|||{SystemInfo.operatingSystem}");
 
         return desyncInfo.ToString();
+    }
+
+    private string GetDivergingMethodPatchSummary()
+    {
+        try
+        {
+            if (diffAt < 0 || diffAt >= local.desyncStackTraces.Count)
+                return null;
+
+            if (local.desyncStackTraces[diffAt] is not StackTraceLogItemRaw rawItem || rawItem.depth == 0)
+                return null;
+
+            var builder = new StringBuilder();
+            builder.AppendLine($"Diverging trace index: {diffAt}");
+            builder.AppendLine();
+
+            for (int i = 0; i < rawItem.depth; i++)
+            {
+                var method = Native.MethodBaseFromAddr(rawItem.raw[i], false);
+                if (method == null) continue;
+
+                var patches = Harmony.GetPatchInfo(method);
+                if (patches == null) continue;
+
+                bool hasPatches = patches.Prefixes.Count > 0 || patches.Postfixes.Count > 0 ||
+                                  patches.Transpilers.Count > 0 || patches.Finalizers.Count > 0;
+                if (!hasPatches) continue;
+
+                builder.AppendLine($"Method: {method.DeclaringType?.FullName}:{method.Name}");
+
+                void ListPatches(string label, IList<HarmonyLib.Patch> patchList)
+                {
+                    if (patchList.Count == 0) return;
+                    builder.AppendLine($"  {label}:");
+                    foreach (var patch in patchList)
+                        builder.AppendLine($"    - {patch.owner} :: {patch.PatchMethod.DeclaringType?.FullName}:{patch.PatchMethod.Name}");
+                }
+
+                ListPatches("Prefixes", patches.Prefixes);
+                ListPatches("Postfixes", patches.Postfixes);
+                ListPatches("Transpilers", patches.Transpilers);
+                ListPatches("Finalizers", patches.Finalizers);
+                builder.AppendLine();
+            }
+
+            var result = builder.ToString();
+            return string.IsNullOrWhiteSpace(result) ? null : result;
+        }
+        catch (Exception e)
+        {
+            return $"Failed to generate patch summary: {e}";
+        }
     }
 
     private static string FindFileNameForNextDesyncFile()
