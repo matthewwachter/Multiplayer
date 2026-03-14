@@ -60,8 +60,6 @@ namespace Multiplayer.Client.Persistent
                 && window is Dialog_BeginRitual tempDialog and not RitualBeginProxy // Let any ritual through, but not MP proxy
                 && (Multiplayer.ExecutingCmds || Multiplayer.Ticking))
             {
-                tempDialog.PostOpen(); // Completes initialization
-
                 var comp = tempDialog.map.MpComp();
                 var session = comp.sessionManager.GetFirstOfType<RitualSession>();
 
@@ -75,6 +73,7 @@ namespace Multiplayer.Client.Persistent
 
                 if (session == null)
                 {
+                    tempDialog.PostOpen(); // Completes initialization (only when creating a new session)
                     var data = new RitualData
                     {
                         ritual = tempDialog.ritual,
