@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using HarmonyLib;
 using Multiplayer.Client.Patches;
 using Multiplayer.Common;
@@ -46,6 +47,11 @@ namespace Multiplayer.Client.Desyncs
             if (Multiplayer.Client == null) return false;
             if (Multiplayer.settings.desyncTracingMode == DesyncTracingMode.None) return false;
             if (Multiplayer.game == null) return false;
+
+            // Deferred stack tracing reads x86-64 instruction bytes and is only
+            // supported on Windows. Disable all trace collection on other platforms
+            // so trace hashes don't diverge in cross-platform sessions.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return false;
 
             if (!Multiplayer.game.gameComp.logDesyncTraces) return false;
 

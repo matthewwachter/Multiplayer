@@ -41,14 +41,29 @@ namespace Multiplayer.Client
                 {
                     SyncDelegate sd => sd.method.MethodDesc() + sd.version,
                     SyncMethod sm => sm.method.MethodDesc() + sm.version,
-                    SyncField sf => sf.memberPath + sf.fieldType.type + sf.version,
-                    _ => handler.GetType().FullName + handler.version
+                    SyncField sf => sf.memberPath + PortableTypeName(sf.fieldType.type) + sf.version,
+                    _ => PortableTypeName(handler.GetType()) + handler.version
                 };
 
                 hash = GenText.StableStringHash(identity) ^ (hash * 31);
             }
 
             return hash;
+        }
+
+        /// <summary>
+        /// Returns a type name without assembly-qualified info so hashes
+        /// match across platforms where Assembly-CSharp versions may differ.
+        /// </summary>
+        static string PortableTypeName(Type type)
+        {
+            if (type == null) return "null";
+            if (!type.IsGenericType) return type.FullName ?? type.Name;
+
+            var def = type.GetGenericTypeDefinition();
+            var args = type.GetGenericArguments();
+            var baseName = (def.FullName ?? def.Name).Split('`')[0];
+            return baseName + "<" + args.Select(PortableTypeName).Join() + ">";
         }
 
         public static SyncMethod Method(Type targetType, string methodName, SyncType[] argTypes = null)
