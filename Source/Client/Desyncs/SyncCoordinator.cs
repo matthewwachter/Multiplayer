@@ -12,6 +12,9 @@ namespace Multiplayer.Client
 {
     public class SyncCoordinator
     {
+        // Match the serialization limit in SyncOpinion.Bind (SyncInfoPacket.cs)
+        private const int MaxTraceHashes = 1 << 21;
+
         public bool ShouldCollect => !Multiplayer.IsReplay;
 
         private ClientSyncOpinion OpinionInBuilding =>
@@ -219,6 +222,7 @@ namespace Multiplayer.Client
         public void TryAddInfoForDesyncLog(string info1, string info2)
         {
             if (!ShouldCollect) return;
+            if (OpinionInBuilding.desyncStackTraceHashes.Count >= MaxTraceHashes) return;
 
             OpinionInBuilding.TryMarkSimulating();
 
@@ -237,6 +241,7 @@ namespace Multiplayer.Client
         public void TryAddStackTraceForDesyncLogRaw(StackTraceLogItemRaw item, int depth, int hashIn, string moreInfo = null)
         {
             if (!ShouldCollect) return;
+            if (OpinionInBuilding.desyncStackTraceHashes.Count >= MaxTraceHashes) return;
 
             OpinionInBuilding.TryMarkSimulating();
 
