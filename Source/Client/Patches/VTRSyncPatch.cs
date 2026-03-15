@@ -86,6 +86,7 @@ namespace Multiplayer.Client.Patches
         static void Prefix(Map value)
         {
             if (Multiplayer.Client == null) return;
+            if (Multiplayer.reloading) return;
 
             try
             {
@@ -128,6 +129,7 @@ namespace Multiplayer.Client.Patches
         static void Postfix(WorldRenderMode __result)
         {
             if (Multiplayer.Client == null) return;
+            if (Multiplayer.reloading) return;
 
             try
             {
