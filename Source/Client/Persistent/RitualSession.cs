@@ -1,4 +1,5 @@
 ﻿using Multiplayer.API;
+using Multiplayer.Client.Util;
 using RimWorld;
 using Verse;
 
@@ -31,11 +32,16 @@ public class RitualSession : SemiPersistentSession
     [SyncMethod]
     public void Start()
     {
+        MpLog.Log($"RitualSession.Start: isGravship={data.isGravshipRitual}, " +
+            $"rand={Rand.StateCompressed}, tick={Find.TickManager.TicksGame}");
+
         // Handle the same stuff as Dialog_BeginGravshipLaunch
         if (data.isGravshipRitual)
         {
             if (data.ritual.behavior is RitualBehaviorWorker_GravshipLaunch behavior)
             {
+                MpLog.Log($"GravshipLaunch: visitors={data.forceVisitorsToLeave}, " +
+                    $"animals={data.boardColonyAnimals}, mechs={data.boardColonyMechs}");
                 behavior.forceVisitorsToLeave = data.forceVisitorsToLeave;
                 behavior.boardColonyAnimals = data.boardColonyAnimals;
                 behavior.boardColonyMechs = data.boardColonyMechs;
@@ -43,8 +49,12 @@ public class RitualSession : SemiPersistentSession
             else Log.Error($"Gravship ritual is using an incorrect ritual behavior. Expected {nameof(RitualBehaviorWorker_GravshipLaunch)} (or its subtype), received: {(data.ritual.behavior?.GetType()).ToStringSafe()}");
         }
 
+        MpLog.Log($"RitualSession.Start: pre-action rand={Rand.StateCompressed}");
+
         if (data.action != null && data.action(data.assignments))
             Remove();
+
+        MpLog.Log($"RitualSession.Start: post-action rand={Rand.StateCompressed}");
     }
 
     public void OpenWindow(bool sound = true)

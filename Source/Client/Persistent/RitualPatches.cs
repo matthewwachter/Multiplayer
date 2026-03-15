@@ -1,5 +1,6 @@
 using HarmonyLib;
 using Multiplayer.API;
+using Multiplayer.Client.Util;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,12 @@ namespace Multiplayer.Client.Persistent
 
                 if (session == null)
                 {
+                    var prePostOpenRand = Rand.StateCompressed;
                     tempDialog.PostOpen(); // Completes initialization (only when creating a new session)
+                    var postPostOpenRand = Rand.StateCompressed;
+                    MpLog.Log($"RitualPatches.PostOpen: pre={prePostOpenRand}, post={postPostOpenRand}, " +
+                        $"isGravship={tempDialog is Dialog_BeginGravshipLaunch}");
+
                     var data = new RitualData
                     {
                         ritual = tempDialog.ritual,
@@ -94,6 +100,8 @@ namespace Multiplayer.Client.Persistent
                         data.forceVisitorsToLeave = gravshipLaunch.forceVisitorsToLeave;
                         data.boardColonyAnimals = gravshipLaunch.boardColonyAnimals;
                         data.boardColonyMechs = gravshipLaunch.boardColonyMechs;
+                        MpLog.Log($"RitualPatches.Gravship: visitors={data.forceVisitorsToLeave}, " +
+                            $"animals={data.boardColonyAnimals}, mechs={data.boardColonyMechs}");
                     }
                     else
                     {
